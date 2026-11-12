@@ -103,6 +103,12 @@
   .hero-art svg { width: 100%; height: auto; display: block; filter: drop-shadow(0 20px 30px rgba(0,105,122,.18)); }
   .float { animation: float 4s ease-in-out infinite; }
   @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+  .surfer { animation: surf 3.2s ease-in-out infinite; transform-box: fill-box; transform-origin: 50% 100%; }
+  @keyframes surf { 0%,100% { transform: rotate(-4deg); } 50% { transform: rotate(4deg); } }
+  .gday { animation: gday 2.6s ease-in-out infinite; transform-box: fill-box; transform-origin: 10% 100%; }
+  @keyframes gday { 0%,100% { transform: scale(1); } 50% { transform: scale(1.08) rotate(-2deg); } }
+  .sun-rays { animation: spin 30s linear infinite; transform-box: fill-box; transform-origin: center; }
+  @keyframes spin { to { transform: rotate(360deg); } }
   .bubble { position: absolute; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #fff, rgba(255,255,255,.35) 60%, rgba(127,219,218,.3)); border: 2px solid rgba(255,255,255,.8); animation: rise 7s ease-in infinite; z-index: 1; pointer-events: none; }
   @keyframes rise { 0% { transform: translateY(0) scale(.8); opacity: 0; } 15% { opacity: .9; } 100% { transform: translateY(-420px) scale(1.1); opacity: 0; } }
 
@@ -280,7 +286,7 @@
 
   <div class="wrap hero-grid">
     <div>
-      <div class="badge">☀️ Proudly Sunshine Coast, QLD</div>
+      <div class="badge">🐨 G'day from the Sunshine Coast, QLD</div>
       <h1>Spa day for your pup, <span class="hl">at your door.</span></h1>
       <p class="tagline">Our grooming van rolls up to your driveway, so your best mate gets pampered while you get on with your day. No car trips, no kennels, no fuss. Just a fresh, fluffy, happy dog.</p>
       <div class="hero-ctas">
@@ -291,94 +297,213 @@
         <span>⭐ 4.9 from 300+ locals</span>
         <span>🛡️ Fully insured</span>
         <span>🌿 Aussie-made, eco shampoos</span>
+        <span>🦘 Locally owned</span>
       </div>
     </div>
 
     <div class="hero-art">
-      <!-- Sunshine Coast scene: Glass House Mountains, surf, palms and the Suds & Pups van -->
-      <svg viewBox="0 0 520 440" role="img" aria-label="Illustration of the Suds and Pups grooming van parked by the beach with the Glass House Mountains and a sunny sky behind it">
+      <!-- Sunshine Coast scene: koala driving the van, kangaroo surfing on the roof, kookaburra hitching a ride -->
+      <svg viewBox="0 0 540 500" role="img" aria-label="Cartoon of a koala driving the Suds and Pups grooming van along the beach, with a kangaroo in sunnies surfing on a board on the roof, a kookaburra riding along, and a fluffy dog in the window. The Glass House Mountains, a lighthouse and a dolphin are in the background.">
         <defs>
-          <clipPath id="sceneClip"><rect x="0" y="0" width="520" height="440" rx="40"/></clipPath>
+          <clipPath id="sceneClip"><rect x="0" y="0" width="540" height="500" rx="40"/></clipPath>
+          <clipPath id="cabWin"><path d="M348 332 L370 332 Q382 332 388 342 L414 388 L348 388 Z"/></clipPath>
+          <clipPath id="midWin"><rect x="272" y="332" width="62" height="56" rx="10"/></clipPath>
           <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#5FD0E0"/><stop offset="1" stop-color="#D6F6F4"/>
+            <stop offset="0" stop-color="#4FC8DD"/><stop offset="1" stop-color="#DDF7F4"/>
           </linearGradient>
           <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0" stop-color="#14B3C4"/><stop offset="1" stop-color="#0A8EA0"/>
           </linearGradient>
+          <linearGradient id="board" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#FFC229"/><stop offset="1" stop-color="#FF9F45"/>
+          </linearGradient>
         </defs>
         <g clip-path="url(#sceneClip)">
-          <rect width="520" height="440" fill="url(#sky)"/>
-          <!-- sun -->
-          <g>
-            <circle cx="410" cy="88" r="58" fill="#FFC229" opacity=".25"/>
-            <circle cx="410" cy="88" r="42" fill="#FFC229"/>
+          <rect width="540" height="500" fill="url(#sky)"/>
+
+          <!-- sun with rays -->
+          <g class="sun-rays" stroke="#FFC229" stroke-width="6" stroke-linecap="round" opacity=".7">
+            <line x1="455" y1="18" x2="455" y2="2"/><line x1="455" y1="142" x2="455" y2="158"/>
+            <line x1="393" y1="80" x2="377" y2="80"/><line x1="517" y1="80" x2="533" y2="80"/>
+            <line x1="411" y1="36" x2="400" y2="25"/><line x1="499" y1="124" x2="510" y2="135"/>
+            <line x1="411" y1="124" x2="400" y2="135"/><line x1="499" y1="36" x2="510" y2="25"/>
           </g>
+          <circle cx="455" cy="80" r="50" fill="#FFC229"/>
+          <circle cx="455" cy="80" r="50" fill="none" stroke="#FFE08A" stroke-width="6"/>
+
           <!-- clouds -->
-          <g fill="#fff" opacity=".9">
-            <ellipse cx="110" cy="70" rx="44" ry="16"/><ellipse cx="140" cy="60" rx="30" ry="18"/>
-            <ellipse cx="300" cy="110" rx="34" ry="12"/><ellipse cx="320" cy="102" rx="22" ry="13"/>
+          <g fill="#fff" opacity=".92">
+            <ellipse cx="90" cy="64" rx="44" ry="15"/><ellipse cx="118" cy="54" rx="28" ry="17"/>
+            <ellipse cx="300" cy="96" rx="32" ry="11"/><ellipse cx="318" cy="88" rx="20" ry="12"/>
           </g>
-          <!-- Glass House Mountains silhouette -->
-          <path d="M0 240 L40 230 L70 170 L84 150 L98 172 L118 226 L150 230 L172 190 L182 160 L194 128 L206 160 L218 205 L246 228 L270 214 L290 186 L304 174 L318 196 L336 230 L380 236 L410 220 L440 232 L520 236 L520 270 L0 270 Z" fill="#3E8E7E"/>
-          <path d="M0 252 L60 242 L120 248 L200 238 L280 246 L360 240 L440 246 L520 242 L520 280 L0 280 Z" fill="#2F7A6B"/>
+          <!-- seagulls -->
+          <g fill="none" stroke="#1F3640" stroke-width="2.5" stroke-linecap="round" opacity=".55">
+            <path d="M190 128 q7 -7 14 0 q7 -7 14 0"/><path d="M226 112 q5 -5 10 0 q5 -5 10 0"/><path d="M350 150 q6 -6 12 0 q6 -6 12 0"/>
+          </g>
+
+          <!-- Glass House Mountains -->
+          <path d="M0 272 L40 262 L70 202 L84 182 L98 204 L118 258 L150 262 L172 222 L182 192 L194 160 L206 192 L218 237 L246 260 L270 246 L290 218 L304 206 L318 228 L336 262 L380 268 L410 252 L440 264 L540 268 L540 300 L0 300 Z" fill="#3E8E7E"/>
+          <path d="M0 284 L60 274 L120 280 L200 270 L280 278 L360 272 L440 278 L540 274 L540 310 L0 310 Z" fill="#2F7A6B"/>
+
           <!-- ocean -->
-          <rect x="0" y="262" width="520" height="80" fill="url(#sea)"/>
-          <path d="M0 282 q20 -8 40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0" fill="none" stroke="#BFF5F2" stroke-width="3" stroke-linecap="round" opacity=".8"/>
-          <path d="M-20 306 q20 -8 40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".7"/>
-          <!-- surfer -->
-          <g transform="translate(96 278)">
-            <ellipse cx="0" cy="12" rx="22" ry="4" fill="#FF7A59"/>
-            <rect x="-3" y="-10" width="6" height="20" rx="3" fill="#1F3640"/>
-            <circle cx="0" cy="-15" r="5" fill="#1F3640"/>
-            <path d="M-3 -5 L-14 -10 M3 -5 L14 -2" stroke="#1F3640" stroke-width="3" stroke-linecap="round"/>
+          <rect x="0" y="292" width="540" height="84" fill="url(#sea)"/>
+          <path d="M0 312 q20 -8 40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0" fill="none" stroke="#BFF5F2" stroke-width="3" stroke-linecap="round" opacity=".8"/>
+          <path d="M-20 338 q20 -8 40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".7"/>
+
+          <!-- headland + lighthouse -->
+          <path d="M455 300 Q490 272 540 276 L540 306 L455 306 Z" fill="#2F7A6B"/>
+          <g transform="translate(500 236)">
+            <path d="M-6 44 L-4 4 L4 4 L6 44 Z" fill="#fff"/>
+            <rect x="-5" y="18" width="10" height="7" fill="#FF7A59"/>
+            <rect x="-5" y="-4" width="10" height="8" rx="2" fill="#FFE08A"/>
+            <path d="M-7 -4 L0 -12 L7 -4 Z" fill="#FF7A59"/>
           </g>
+
           <!-- sand -->
-          <path d="M0 330 Q130 312 260 326 T520 322 L520 440 L0 440 Z" fill="#F7DFAE"/>
-          <path d="M0 360 Q160 344 300 358 T520 352 L520 440 L0 440 Z" fill="#F2D196"/>
-          <!-- palm tree -->
-          <g transform="translate(470 360)">
-            <path d="M0 0 C -6 -40 -2 -90 10 -130" stroke="#8A5A2B" stroke-width="10" fill="none" stroke-linecap="round"/>
+          <path d="M0 370 Q140 352 270 366 T540 362 L540 500 L0 500 Z" fill="#F7DFAE"/>
+          <path d="M0 404 Q160 390 300 402 T540 396 L540 500 L0 500 Z" fill="#F2D196"/>
+
+          <!-- palm tree (left) -->
+          <g transform="translate(36 470)">
+            <path d="M0 0 C 6 -60 0 -130 -6 -190" stroke="#8A5A2B" stroke-width="11" fill="none" stroke-linecap="round"/>
             <g fill="#2FA36B">
-              <path d="M10 -130 C -20 -150 -50 -140 -66 -116 C -40 -128 -16 -126 10 -130Z"/>
-              <path d="M10 -130 C 30 -160 60 -158 76 -140 C 50 -144 30 -138 10 -130Z"/>
-              <path d="M10 -130 C -10 -170 -40 -176 -56 -166 C -30 -160 -10 -150 10 -130Z"/>
-              <path d="M10 -130 C 30 -120 50 -96 52 -76 C 36 -96 24 -112 10 -130Z"/>
-              <path d="M10 -130 C -14 -116 -30 -94 -32 -72 C -18 -94 -4 -112 10 -130Z"/>
+              <path d="M-6 -190 C -30 -210 -60 -200 -76 -176 C -50 -188 -28 -186 -6 -190Z"/>
+              <path d="M-6 -190 C 14 -220 46 -218 62 -200 C 36 -204 16 -198 -6 -190Z"/>
+              <path d="M-6 -190 C -24 -230 -50 -236 -64 -226 C -40 -220 -24 -210 -6 -190Z"/>
+              <path d="M-6 -190 C 16 -180 38 -156 40 -136 C 24 -156 10 -172 -6 -190Z"/>
+              <path d="M-6 -190 C -28 -176 -44 -154 -46 -132 C -32 -154 -18 -172 -6 -190Z"/>
             </g>
-            <circle cx="6" cy="-126" r="5" fill="#8A5A2B"/><circle cx="14" cy="-124" r="5" fill="#8A5A2B"/>
+            <circle cx="-10" cy="-186" r="5" fill="#8A5A2B"/><circle cx="-2" cy="-184" r="5" fill="#8A5A2B"/>
           </g>
-          <!-- frangipani on sand -->
-          <g transform="translate(40 410)">
+
+          <!-- frangipanis on sand -->
+          <g transform="translate(470 470)">
+            <g fill="#fff"><ellipse cx="0" cy="-9" rx="6" ry="10"/><ellipse cx="9" cy="-2" rx="6" ry="10" transform="rotate(72 9 -2)"/><ellipse cx="5" cy="8" rx="6" ry="10" transform="rotate(144 5 8)"/><ellipse cx="-5" cy="8" rx="6" ry="10" transform="rotate(216 -5 8)"/><ellipse cx="-9" cy="-2" rx="6" ry="10" transform="rotate(288 -9 -2)"/></g>
+            <circle r="5" fill="#FFC229"/>
+          </g>
+          <g transform="translate(505 448) scale(.7)">
             <g fill="#fff"><ellipse cx="0" cy="-9" rx="6" ry="10"/><ellipse cx="9" cy="-2" rx="6" ry="10" transform="rotate(72 9 -2)"/><ellipse cx="5" cy="8" rx="6" ry="10" transform="rotate(144 5 8)"/><ellipse cx="-5" cy="8" rx="6" ry="10" transform="rotate(216 -5 8)"/><ellipse cx="-9" cy="-2" rx="6" ry="10" transform="rotate(288 -9 -2)"/></g>
             <circle r="5" fill="#FFC229"/>
           </g>
 
-          <!-- VAN -->
-          <g class="float" transform="translate(0 0)">
-            <ellipse cx="250" cy="412" rx="150" ry="12" fill="#1F3640" opacity=".15"/>
-            <!-- body -->
-            <path d="M110 300 Q110 270 140 270 L320 270 Q350 270 366 296 L394 340 Q402 352 402 366 L402 386 Q402 400 388 400 L124 400 Q110 400 110 386 Z" fill="#FFFFFF" stroke="#0A6F80" stroke-width="4"/>
-            <!-- stripe -->
-            <path d="M112 352 L400 352 L400 372 L112 372 Z" fill="#FF7A59"/>
-            <path d="M112 372 L400 372 L400 380 L112 380 Z" fill="#FFC229"/>
-            <!-- windows -->
-            <path d="M330 284 L352 284 Q360 284 366 294 L386 330 L330 330 Z" fill="#9BE3EA" stroke="#0A6F80" stroke-width="3"/>
-            <rect x="262" y="284" width="56" height="46" rx="10" fill="#9BE3EA" stroke="#0A6F80" stroke-width="3"/>
-            <!-- logo bubble -->
-            <circle cx="160" cy="312" r="32" fill="#E3F7F6" stroke="#0A6F80" stroke-width="3"/>
-            <text x="160" y="326" text-anchor="middle" font-size="38">🐶</text>
-            <text x="198" y="304" font-family="Fredoka, sans-serif" font-weight="700" font-size="17" fill="#0A6F80">Suds &amp;</text>
-            <text x="198" y="326" font-family="Fredoka, sans-serif" font-weight="700" font-size="17" fill="#FF7A59">Pups</text>
-            <text x="120" y="366" font-family="Nunito, sans-serif" font-weight="800" font-size="11" fill="#fff">MOBILE GROOMING · SUNSHINE COAST</text>
-            <!-- bubbles from roof -->
-            <g fill="#fff" stroke="#7FDBDA" stroke-width="2">
-              <circle cx="150" cy="256" r="9"/><circle cx="170" cy="242" r="13"/><circle cx="196" cy="252" r="8"/><circle cx="214" cy="236" r="6"/>
+          <!-- ===== VAN + CREW (floats together) ===== -->
+          <g class="float">
+            <ellipse cx="266" cy="474" rx="160" ry="11" fill="#1F3640" opacity=".15"/>
+
+            <!-- roof rack -->
+            <g stroke="#0A6F80" stroke-width="5" stroke-linecap="round">
+              <line x1="150" y1="320" x2="150" y2="312"/><line x1="330" y1="320" x2="330" y2="312"/>
+              <line x1="138" y1="312" x2="342" y2="312"/>
             </g>
-            <!-- light & bumper -->
-            <rect x="388" y="350" width="12" height="10" rx="3" fill="#FFC229"/>
+
+            <!-- surfboard -->
+            <g>
+              <path d="M104 306 Q110 297 150 297 L360 297 Q392 297 396 306 Q392 315 360 315 L150 315 Q110 315 104 306 Z" fill="url(#board)" stroke="#E0A400" stroke-width="2"/>
+              <path d="M110 306 L390 306" stroke="#FF7A59" stroke-width="4"/>
+              <path d="M118 315 l-8 10 l18 -10 Z" fill="#E0A400"/>
+            </g>
+
+            <!-- kookaburra hitching a ride on the board -->
+            <g>
+              <path d="M118 288 L104 296 L108 300 L122 292 Z" fill="#4E7FA8"/>
+              <ellipse cx="128" cy="284" rx="11" ry="13" fill="#F3E6CF"/>
+              <ellipse cx="123" cy="283" rx="8" ry="12" fill="#7A5230"/>
+              <circle cx="134" cy="268" r="10" fill="#F3E6CF"/>
+              <path d="M126 266 Q134 263 142 268" stroke="#5A3B22" stroke-width="3" fill="none" stroke-linecap="round"/>
+              <circle cx="137" cy="267" r="2.2" fill="#1F3640"/>
+              <path d="M142 268 L160 272 L142 274 Z" fill="#3B3B3B"/>
+              <path d="M142 272 L156 273 L142 275 Z" fill="#D9C7A8"/>
+              <path d="M126 296 l-2 4 M132 296 l2 4" stroke="#7A5230" stroke-width="2" stroke-linecap="round"/>
+            </g>
+
+            <!-- kangaroo surfing on the roof -->
+            <g class="surfer">
+              <!-- tail -->
+              <path d="M238 266 Q206 280 184 296 Q180 300 188 299 Q214 290 246 278 Z" fill="#B97440"/>
+              <!-- back leg + big foot -->
+              <ellipse cx="248" cy="270" rx="18" ry="24" fill="#C8864B" transform="rotate(-18 248 270)"/>
+              <ellipse cx="256" cy="293" rx="24" ry="5" fill="#B97440"/>
+              <!-- body -->
+              <ellipse cx="262" cy="236" rx="21" ry="36" fill="#C8864B" transform="rotate(16 262 236)"/>
+              <ellipse cx="270" cy="242" rx="11" ry="24" fill="#F1D3A8" transform="rotate(16 270 242)"/>
+              <!-- arms out for balance -->
+              <path d="M272 226 Q288 232 300 236" stroke="#C8864B" stroke-width="7" fill="none" stroke-linecap="round"/>
+              <path d="M258 222 Q244 214 230 208" stroke="#C8864B" stroke-width="7" fill="none" stroke-linecap="round"/>
+              <circle cx="301" cy="237" r="4.5" fill="#B97440"/><circle cx="229" cy="207" r="4.5" fill="#B97440"/>
+              <!-- ears -->
+              <ellipse cx="274" cy="176" rx="5.5" ry="14" fill="#C8864B" transform="rotate(-18 274 176)"/>
+              <ellipse cx="274" cy="177" rx="2.5" ry="9" fill="#F3B6A6" transform="rotate(-18 274 177)"/>
+              <ellipse cx="285" cy="174" rx="5.5" ry="14" fill="#C8864B" transform="rotate(10 285 174)"/>
+              <ellipse cx="285" cy="175" rx="2.5" ry="9" fill="#F3B6A6" transform="rotate(10 285 175)"/>
+              <!-- head + snout -->
+              <ellipse cx="282" cy="196" rx="16" ry="13" fill="#C8864B"/>
+              <ellipse cx="298" cy="202" rx="12" ry="8" fill="#D99A60"/>
+              <circle cx="308" cy="199" r="3.4" fill="#2B2B2B"/>
+              <!-- zinc stripe on nose -->
+              <path d="M292 196 L300 196" stroke="#fff" stroke-width="3.5" stroke-linecap="round"/>
+              <path d="M300 207 Q304 209 307 206" stroke="#5A3B22" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+              <!-- sunnies -->
+              <rect x="276" y="188" width="17" height="7" rx="3" fill="#1F3640"/>
+              <line x1="276" y1="191" x2="268" y2="190" stroke="#1F3640" stroke-width="2"/>
+            </g>
+
+            <!-- van body -->
+            <path d="M100 350 Q100 320 130 320 L350 320 Q378 320 394 344 L424 392 Q432 404 432 418 L432 436 Q432 450 418 450 L114 450 Q100 450 100 436 Z" fill="#FFFFFF" stroke="#0A6F80" stroke-width="4"/>
+            <path d="M102 402 L430 402 L430 420 L102 420 Z" fill="#FF7A59"/>
+            <path d="M102 420 L431 420 L431 428 L102 428 Z" fill="#FFC229"/>
+
+            <!-- middle window: freshly washed pup -->
+            <rect x="272" y="332" width="62" height="56" rx="10" fill="#9BE3EA"/>
+            <g clip-path="url(#midWin)">
+              <ellipse cx="303" cy="392" rx="22" ry="14" fill="#F6E7CF"/>
+              <ellipse cx="303" cy="364" rx="17" ry="16" fill="#F6E7CF"/>
+              <ellipse cx="287" cy="366" rx="6" ry="12" fill="#B27A4B" transform="rotate(14 287 366)"/>
+              <ellipse cx="319" cy="366" rx="6" ry="12" fill="#B27A4B" transform="rotate(-14 319 366)"/>
+              <circle cx="297" cy="361" r="2.4" fill="#1F3640"/><circle cx="309" cy="361" r="2.4" fill="#1F3640"/>
+              <ellipse cx="303" cy="368" rx="3.6" ry="2.8" fill="#1F3640"/>
+              <path d="M300 373 Q303 382 306 373 Z" fill="#FF8A9A"/>
+              <g fill="#fff" stroke="#7FDBDA" stroke-width="1.2">
+                <circle cx="296" cy="347" r="5"/><circle cx="304" cy="344" r="6"/><circle cx="312" cy="348" r="4.5"/>
+              </g>
+            </g>
+            <rect x="272" y="332" width="62" height="56" rx="10" fill="none" stroke="#0A6F80" stroke-width="3"/>
+
+            <!-- cab window: koala at the wheel -->
+            <path d="M348 332 L370 332 Q382 332 388 342 L414 388 L348 388 Z" fill="#9BE3EA"/>
+            <g clip-path="url(#cabWin)">
+              <ellipse cx="368" cy="392" rx="18" ry="16" fill="#9AA5AE"/>
+              <circle cx="356" cy="349" r="10" fill="#9AA5AE"/><circle cx="356" cy="349" r="5.5" fill="#E4E8EB"/>
+              <circle cx="384" cy="349" r="10" fill="#9AA5AE"/><circle cx="384" cy="349" r="5.5" fill="#E4E8EB"/>
+              <circle cx="370" cy="363" r="15" fill="#9AA5AE"/>
+              <circle cx="364" cy="360" r="2.2" fill="#1F3640"/><circle cx="377" cy="360" r="2.2" fill="#1F3640"/>
+              <ellipse cx="370.5" cy="367" rx="4.5" ry="6" fill="#2B2B2B"/>
+              <path d="M366 374 Q370.5 377 375 374" stroke="#1F3640" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              <!-- steering wheel + paw -->
+              <ellipse cx="398" cy="380" rx="4" ry="12" fill="none" stroke="#1F3640" stroke-width="3"/>
+              <ellipse cx="394" cy="373" rx="5" ry="4.5" fill="#9AA5AE"/>
+            </g>
+            <path d="M348 332 L370 332 Q382 332 388 342 L414 388 L348 388 Z" fill="none" stroke="#0A6F80" stroke-width="3"/>
+
+            <!-- logo -->
+            <circle cx="150" cy="362" r="30" fill="#E3F7F6" stroke="#0A6F80" stroke-width="3"/>
+            <text x="150" y="375" text-anchor="middle" font-size="32">🐶</text>
+            <text x="188" y="356" font-family="Fredoka, sans-serif" font-weight="700" font-size="18" fill="#0A6F80">Suds &amp;</text>
+            <text x="188" y="379" font-family="Fredoka, sans-serif" font-weight="700" font-size="18" fill="#FF7A59">Pups</text>
+            <text x="114" y="415" font-family="Nunito, sans-serif" font-weight="800" font-size="10.5" fill="#fff">MOBILE DOG GROOMING · SUNSHINE COAST QLD</text>
+
+            <!-- headlight -->
+            <rect x="418" y="400" width="12" height="10" rx="3" fill="#FFC229"/>
             <!-- wheels -->
-            <g><circle cx="170" cy="400" r="26" fill="#1F3640"/><circle cx="170" cy="400" r="11" fill="#D6E3E8"/></g>
-            <g><circle cx="344" cy="400" r="26" fill="#1F3640"/><circle cx="344" cy="400" r="11" fill="#D6E3E8"/></g>
+            <g><circle cx="168" cy="450" r="26" fill="#1F3640"/><circle cx="168" cy="450" r="11" fill="#D6E3E8"/></g>
+            <g><circle cx="368" cy="450" r="26" fill="#1F3640"/><circle cx="368" cy="450" r="11" fill="#D6E3E8"/></g>
+
+            <!-- koala's "G'day!" -->
+            <g class="gday">
+              <rect x="388" y="252" width="88" height="36" rx="18" fill="#fff" stroke="#0A6F80" stroke-width="3"/>
+              <path d="M402 286 L396 304 L414 287 Z" fill="#fff" stroke="#0A6F80" stroke-width="3" stroke-linejoin="round"/>
+              <rect x="400" y="282" width="16" height="5" fill="#fff"/>
+              <text x="432" y="277" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="700" font-size="18" fill="#FF7A59">G'day!</text>
+            </g>
           </g>
         </g>
       </svg>
