@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Book a Groom | Suds &amp; Pups</title>
+<meta name="description" content="Book a mobile dog groom with Suds & Pups. Pick your dog's size, a package and a time, and we'll come to your door on the Sunshine Coast.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+  /* ---------- Booking header ---------- */
+  .book-hero { background: linear-gradient(180deg, #BFF0F0 0%, #E6FAF8 55%, var(--sand) 100%); padding: 56px 0 0; text-align: center; position: relative; overflow: hidden; }
+  .book-hero h1 { font-size: clamp(2.3rem, 5.5vw, 3.6rem); color: var(--ocean-deep); margin-bottom: 12px; }
+  .book-hero h1 .hl { color: var(--coral); }
+  .book-hero p { color: var(--muted); font-size: 1.15rem; max-width: 560px; margin: 0 auto; }
+  .book-hero .wave-divider { margin-top: 30px; height: 70px; }
+
+  .booking { padding: 10px 0 90px; }
+  .booking .wrap { max-width: 920px; }
+
+  /* ---------- Progress ---------- */
+  .progress { scroll-margin-top: 90px; display: flex; justify-content: space-between; list-style: none; margin: 0 auto 34px; max-width: 640px; position: relative; }
+  .progress::before { content: ""; position: absolute; left: 10%; right: 10%; top: 22px; height: 4px; background: var(--sand-dark); border-radius: 4px; }
+  .progress li { position: relative; flex: 1; text-align: center; font-weight: 800; font-size: .9rem; color: var(--muted); }
+  .progress .dot {
+    width: 46px; height: 46px; margin: 0 auto 8px; border-radius: 50%; display: grid; place-items: center;
+    background: var(--white); border: 3px solid var(--sand-dark); font-family: "Fredoka", sans-serif; font-size: 1.15rem; color: var(--muted);
+    position: relative; transition: background .3s, border-color .3s, transform .3s cubic-bezier(.34,1.56,.64,1);
+  }
+  .progress li.done .dot { background: var(--lagoon); border-color: var(--lagoon); color: var(--ocean-deep); }
+  .progress li.current .dot { background: var(--coral); border-color: var(--coral); color: var(--white); transform: scale(1.12); box-shadow: 0 5px 0 var(--coral-deep); }
+  .progress li.current { color: var(--ocean-deep); }
+
+  /* ---------- Panel ---------- */
+  .panel { background: var(--white); border-radius: var(--radius); box-shadow: var(--shadow); padding: 44px 40px 36px; }
+  .step-pane { padding: 0; }
+  .step-pane[hidden], .actions[hidden] { display: none; }
+  .step-pane h2 { font-size: clamp(1.7rem, 3.6vw, 2.2rem); color: var(--ocean-deep); margin-bottom: 6px; }
+  .step-pane > p.lead { color: var(--muted); margin-bottom: 26px; font-size: 1.05rem; }
+  .step-pane h3 { font-size: 1.25rem; color: var(--ocean-deep); margin: 30px 0 12px; }
+
+  /* ---------- Option cards (radio) ---------- */
+  .opts { display: grid; gap: 18px; }
+  .opts-4 { grid-template-columns: repeat(4, 1fr); }
+  .opts-3 { grid-template-columns: repeat(3, 1fr); }
+  .opt { position: relative; display: block; cursor: pointer; }
+  .opt input { position: absolute; opacity: 0; pointer-events: none; }
+  .opt-body {
+    display: block; height: 100%; background: var(--sand); border: 3px solid transparent; border-radius: 22px; padding: 24px 18px 20px; text-align: center;
+    transition: transform .3s cubic-bezier(.34,1.56,.64,1), box-shadow .3s, border-color .3s, background .3s;
+  }
+  .opt:hover .opt-body { transform: translateY(-6px); box-shadow: var(--shadow); }
+  .opt input:checked + .opt-body { border-color: var(--lagoon); background: #E6FAF8; transform: translateY(-6px); box-shadow: var(--shadow-lift); }
+  .opt input:focus-visible + .opt-body { outline: 3px solid var(--sun); outline-offset: 3px; }
+  .opt-emoji { font-size: 2.8rem; line-height: 1; margin-bottom: 10px; display: inline-block; transition: transform .4s cubic-bezier(.34,1.56,.64,1); }
+  .opt input:checked + .opt-body .opt-emoji { transform: scale(1.15) rotate(-8deg); }
+  .opt strong { display: block; font-family: "Fredoka", sans-serif; font-size: 1.3rem; color: var(--ocean-deep); line-height: 1.2; }
+  .opt .meta { display: block; color: var(--muted); font-weight: 600; font-size: .95rem; }
+  .opt .extra { display: inline-block; margin-top: 10px; font-weight: 800; font-size: .85rem; color: var(--ocean); background: var(--white); padding: 4px 12px; border-radius: 999px; }
+  .opt .check { position: absolute; top: 12px; right: 12px; width: 26px; height: 26px; border-radius: 50%; background: var(--ocean); color: var(--white); display: grid; place-items: center; font-weight: 800; font-size: .85rem; opacity: 0; transform: scale(.4); transition: opacity .2s, transform .3s cubic-bezier(.34,1.56,.64,1); }
+  .opt input:checked + .opt-body .check { opacity: 1; transform: scale(1); }
+
+  /* package option */
+  .opt-pkg .opt-body { text-align: left; padding: 30px 22px 22px; }
+  .opt-pkg .price { display: block; font-size: 2.3rem; margin: 10px 0 2px; }
+  .opt-pkg ul { list-style: none; display: grid; gap: 6px; margin-top: 14px; font-size: .95rem; }
+  .opt-pkg li { display: flex; gap: 8px; }
+  .opt-pkg li::before { content: "✓"; flex: none; width: 20px; height: 20px; border-radius: 50%; background: var(--white); color: var(--ocean); font-weight: 800; font-size: .75rem; display: grid; place-items: center; margin-top: 2px; }
+  .opt-pkg.featured .opt-body { background: var(--ocean-deep); color: var(--white); }
+  .opt-pkg.featured strong { color: var(--white); }
+  .opt-pkg.featured .meta, .opt-pkg.featured .price small { color: var(--lagoon); }
+  .opt-pkg.featured .price { color: var(--sun); }
+  .opt-pkg.featured li::before { background: rgba(255,255,255,.15); color: var(--sun); }
+  .opt-pkg.featured input:checked + .opt-body { border-color: var(--sun); background: var(--ocean-deep); }
+  .opt-pkg .ribbon { top: -14px; right: 18px; z-index: 1; }
+
+  /* ---------- Day & time chips ---------- */
+  .chips { display: flex; gap: 12px; flex-wrap: wrap; }
+  .days { flex-wrap: nowrap; overflow-x: auto; padding: 8px 4px 14px; margin: 0 -4px; scroll-snap-type: x mandatory; }
+  .chip { position: relative; flex: none; cursor: pointer; scroll-snap-align: start; }
+  .chip input { position: absolute; opacity: 0; pointer-events: none; }
+  .chip span {
+    display: block; text-align: center; background: var(--sand); border: 3px solid transparent; border-radius: 18px; padding: 10px 16px;
+    font-weight: 800; color: var(--ink); transition: transform .25s cubic-bezier(.34,1.56,.64,1), border-color .2s, background .2s;
+  }
+  .chip:hover span { transform: translateY(-3px); }
+  .chip input:checked + span { background: var(--coral); color: var(--white); box-shadow: 0 5px 0 var(--coral-deep); }
+  .chip input:focus-visible + span { outline: 3px solid var(--sun); outline-offset: 3px; }
+  .day span { min-width: 78px; padding: 12px 10px; }
+  .day small { display: block; font-size: .8rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+  .day b { display: block; font-family: "Fredoka", sans-serif; font-size: 1.6rem; line-height: 1.1; }
+  .day input:checked + span small { color: var(--sun-soft); }
+  .chip input:disabled + span { opacity: .5; cursor: not-allowed; transform: none; background: var(--sand-dark); }
+  .chip:has(input:disabled) { cursor: not-allowed; }
+  .slots-empty { color: var(--muted); font-weight: 600; }
+
+  /* ---------- Details form ---------- */
+  .fields { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .field { display: grid; gap: 6px; }
+  .field.full { grid-column: 1 / -1; }
+  .field label { font-weight: 800; font-size: .95rem; color: var(--ocean-deep); }
+  .field input, .field textarea {
+    font: inherit; color: var(--ink); background: var(--sand); border: 3px solid transparent; border-radius: 16px; padding: 12px 16px; transition: border-color .2s, background .2s;
+  }
+  .field input:focus, .field textarea:focus { outline: none; border-color: var(--lagoon); background: var(--white); }
+  .field textarea { resize: vertical; min-height: 80px; }
+  .field .hint { font-size: .85rem; color: var(--muted); }
+
+  /* ---------- Nav buttons ---------- */
+  .actions { display: flex; justify-content: space-between; align-items: center; gap: 14px; margin-top: 36px; padding-top: 26px; border-top: 2px dashed var(--sand-dark); }
+  .actions .total { font-weight: 800; color: var(--muted); }
+  .actions .total b { font-family: "Fredoka", sans-serif; font-size: 1.5rem; color: var(--coral); }
+  .actions .btns { display: flex; gap: 14px; margin-left: auto; }
+  .btn[disabled] { opacity: .45; cursor: not-allowed; transform: none !important; }
+
+  /* ---------- Confirmation ---------- */
+  .confirm { text-align: center; }
+  .confirm .big { font-size: 4.5rem; display: inline-block; animation: pop .7s cubic-bezier(.34,1.56,.64,1); }
+  @keyframes pop { 0% { transform: scale(0) rotate(-30deg); } 100% { transform: scale(1) rotate(0); } }
+  .confirm h2 { font-size: clamp(2rem, 4.5vw, 2.8rem); }
+  .confirm .lead { max-width: 520px; margin: 0 auto 28px; }
+  .summary { text-align: left; background: var(--sand); border-radius: 22px; padding: 10px 26px; max-width: 520px; margin: 0 auto; }
+  .summary div { display: flex; justify-content: space-between; gap: 20px; padding: 14px 0; border-bottom: 2px dashed var(--sand-dark); }
+  .summary div:last-child { border-bottom: none; }
+  .summary dt { font-weight: 800; color: var(--muted); }
+  .summary dd { font-weight: 700; text-align: right; }
+  .summary .sum-total dd { font-family: "Fredoka", sans-serif; font-size: 1.5rem; color: var(--coral); }
+  .confirm .note { margin: 24px auto 0; color: var(--muted); font-weight: 600; max-width: 520px; }
+  .confirm .actions { justify-content: center; border-top: none; margin-top: 26px; flex-wrap: wrap; }
+
+  @media (max-width: 900px) {
+    .opts-4 { grid-template-columns: repeat(2, 1fr); }
+    .opts-3 { grid-template-columns: 1fr; max-width: 440px; margin-inline: auto; gap: 26px; }
+  }
+  @media (max-width: 640px) {
+    .panel { padding: 30px 20px 26px; }
+    .progress li { font-size: .75rem; }
+    .progress .dot { width: 40px; height: 40px; }
+    .progress::before { top: 19px; }
+    .fields { grid-template-columns: 1fr; }
+    .actions { flex-direction: column-reverse; align-items: stretch; }
+    .actions .btns { margin-left: 0; flex-direction: column-reverse; }
+    .actions .btn { justify-content: center; }
+    .actions .total { text-align: center; }
+    .summary { padding: 6px 18px; }
+    .summary div { flex-direction: column; gap: 2px; }
+    .summary dd { text-align: left; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<nav class="nav" aria-label="Main">
+  <div class="wrap">
+    <a href="index.html" class="logo">🫧 Suds <span>&amp;</span> Pups</a>
+    <ul class="nav-links">
+      <li><a href="index.html#how">How it works</a></li>
+      <li><a href="index.html#packages">Packages</a></li>
+      <li><a href="index.html#reviews">Reviews</a></li>
+      <li><a href="index.html#area">Service area</a></li>
+    </ul>
+    <a href="book.html" class="btn btn-primary btn-sm" aria-current="page">Book <span class="paw">🐾</span></a>
+  </div>
+</nav>
+
+<header class="book-hero">
+  <span class="bubble" style="width:24px;height:24px;left:8%;bottom:30px;animation-delay:0s"></span>
+  <span class="bubble" style="width:16px;height:16px;left:82%;bottom:10px;animation-delay:2.4s"></span>
+  <span class="bubble" style="width:30px;height:30px;left:62%;bottom:0;animation-delay:4.1s"></span>
+  <div class="wrap">
+    <span class="eyebrow">Book a groom</span>
+    <h1>Let's get your pup <span class="hl">squeaky clean</span></h1>
+    <p>Four quick steps and the van's on its way to your driveway. 🚐</p>
+  </div>
+  <svg class="wave-divider" viewBox="0 0 1440 90" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0 40 C 240 90 480 0 720 40 S 1200 80 1440 30 L1440 90 L0 90 Z" fill="#FFF7E8"/>
+  </svg>
+</header>
+
+<main class="booking">
+  <div class="wrap">
+    <ol class="progress" aria-label="Booking progress">
+      <li data-step="1"><div class="dot">1</div>Dog size</li>
+      <li data-step="2"><div class="dot">2</div>Package</li>
+      <li data-step="3"><div class="dot">3</div>Day &amp; time</li>
+      <li data-step="4"><div class="dot">🐾</div>Confirmed</li>
+    </ol>
+
+    <form class="panel" id="booking" novalidate>
+      <!-- ===== STEP 1: SIZE ===== -->
+      <section class="step-pane" data-step="1" aria-labelledby="h-size">
+        <h2 id="h-size" tabindex="-1">How big is your best mate?</h2>
+        <p class="lead">Bigger pups need a bit more shampoo and time, so price depends on size.</p>
+        <div class="opts opts-4" role="radiogroup" aria-labelledby="h-size" id="sizeOpts"></div>
+      </section>
+
+      <!-- ===== STEP 2: PACKAGE ===== -->
+      <section class="step-pane" data-step="2" aria-labelledby="h-pkg" hidden>
+        <h2 id="h-pkg" tabindex="-1">Pick your pup's pamper</h2>
+        <p class="lead">Prices are in AUD, include GST and are adjusted for your <span id="sizeNote">dog's</span> size.</p>
+        <div class="opts opts-3" role="radiogroup" aria-labelledby="h-pkg" id="pkgOpts"></div>
+      </section>
+
+      <!-- ===== STEP 3: DAY & TIME ===== -->
+      <section class="step-pane" data-step="3" aria-labelledby="h-when" hidden>
+        <h2 id="h-when" tabindex="-1">When should we pull up?</h2>
+        <p class="lead">Mon–Fri 7am–6pm · Sat 8am–4pm · Sundays we're at the beach 🏖️</p>
+        <h3 id="h-day">Pick a day</h3>
+        <div class="chips days" role="radiogroup" aria-labelledby="h-day" id="dayOpts"></div>
+        <h3 id="h-time">Pick a time</h3>
+        <div class="chips" role="radiogroup" aria-labelledby="h-time" id="timeOpts"><p class="slots-empty">Choose a day first ☝️</p></div>
+
+        <h3>Your details</h3>
+        <div class="fields">
+          <div class="field">
+            <label for="f-name">Your name</label>
+            <input id="f-name" name="name" autocomplete="name" required>
+          </div>
+          <div class="field">
+            <label for="f-dog">Dog's name</label>
+            <input id="f-dog" name="dog" required>
+          </div>
+          <div class="field">
+            <label for="f-phone">Mobile</label>
+            <input id="f-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="04xx xxx xxx" required>
+          </div>
+          <div class="field">
+            <label for="f-suburb">Suburb</label>
+            <input id="f-suburb" name="suburb" autocomplete="address-level2" placeholder="e.g. Mooloolaba" required>
+          </div>
+          <div class="field full">
+            <label for="f-address">Street address</label>
+            <input id="f-address" name="address" autocomplete="street-address" required>
+            <span class="hint">Where should the van park? A driveway or street spot out front is perfect.</span>
+          </div>
+          <div class="field full">
+            <label for="f-notes">Anything we should know? <span style="font-weight:600;color:var(--muted)">(optional)</span></label>
+            <textarea id="f-notes" name="notes" placeholder="Nervous with clippers, loves belly rubs, gate code..."></textarea>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== STEP 4: CONFIRMATION ===== -->
+      <section class="step-pane confirm" data-step="4" aria-labelledby="h-done" hidden>
+        <div class="big" aria-hidden="true">🎉</div>
+        <h2 id="h-done" tabindex="-1">You're booked, <span id="c-name"></span>!</h2>
+        <p class="lead"><span id="c-dog"></span> is going to be fresh, fluffy and fabulous. Here's your booking:</p>
+        <dl class="summary">
+          <div><dt>When</dt><dd id="c-when"></dd></div>
+          <div><dt>Package</dt><dd id="c-pkg"></dd></div>
+          <div><dt>Dog size</dt><dd id="c-size"></dd></div>
+          <div><dt>Where</dt><dd id="c-where"></dd></div>
+          <div class="sum-total"><dt>Estimated price</dt><dd id="c-price"></dd></div>
+        </dl>
+        <p class="note">📱 We'll text <b id="c-phone"></b> the day before to confirm, and send a glam shot when we're done. Final price depends on coat condition, and we'll always check with you first.</p>
+        <div class="actions">
+          <a href="index.html" class="btn btn-ghost">Back to home</a>
+          <button type="button" class="btn btn-primary" id="again">Book another pup <span class="paw">🐾</span></button>
+        </div>
+      </section>
+
+      <div class="actions" id="stepActions">
+        <div class="total" id="total" aria-live="polite"></div>
+        <div class="btns">
+          <button type="button" class="btn btn-ghost" id="back">← Back</button>
+          <button type="submit" class="btn btn-primary" id="next">Next <span class="paw">🐾</span></button>
+        </div>
+      </div>
+    </form>
+  </div>
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="logo">🫧 Suds <span>&amp;</span> Pups</div>
+        <p>Mobile dog grooming that comes to you. Locally owned and loved on the Sunshine Coast. 🐨</p>
+      </div>
+      <div>
+        <h4>Say g'day</h4>
+        <ul>
+          <li>📞 <a href="tel:+61754000000">(07) 5400 0000</a></li>
+          <li>✉️ <a href="mailto:hello@sudsandpups.com.au">hello@sudsandpups.com.au</a></li>
+          <li>📍 Sunshine Coast, QLD</li>
+        </ul>
+      </div>
+      <div>
+        <h4>Grooming hours</h4>
+        <ul>
+          <li>Mon–Fri · 7am–6pm</li>
+          <li>Sat · 8am–4pm</li>
+          <li>Sun · Closed (beach day 🏖️)</li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 Suds &amp; Pups Mobile Grooming. All rights reserved.</span>
+      <span>Made with 💛 on the Sunshine Coast</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ===== Booking settings: edit these to change sizes, prices and hours ===== */
+const SIZES = [
+  { id: "small",  emoji: "🐩", name: "Small",  meta: "Under 10 kg", extra: 0 },
+  { id: "medium", emoji: "🐕", name: "Medium", meta: "10–20 kg",    extra: 15 },
+  { id: "large",  emoji: "🦮", name: "Large",  meta: "20–35 kg",    extra: 30 },
+  { id: "giant",  emoji: "🐻", name: "Giant",  meta: "35 kg+",      extra: 45 },
+];
+const PACKAGES = [
+  { id: "splash", emoji: "🛁", name: "Splash & Dash",   meta: "The quick refresh",     price: 75,
+    perks: ["Warm hydrobath, native shampoo", "Blow-dry & brush-out", "Nail trim & ear clean", "Eucalyptus cologne"] },
+  { id: "full",   emoji: "✂️", name: "The Full Groom",  meta: "Head-to-tail makeover", price: 120, featured: true,
+    perks: ["Everything in Splash & Dash", "Breed-style haircut & tidy", "Paw pad & hygiene trim", "Teeth brush & bandana"] },
+  { id: "spa",    emoji: "🌺", name: "Coastal Spa Day", meta: "The ultimate pamper",   price: 165,
+    perks: ["Everything in The Full Groom", "Kakadu plum & aloe coat mask", "Macadamia pawdicure", "Blueberry facial & treat bag"] },
+];
+const SLOTS = {
+  weekday:  ["7:00 am", "8:30 am", "10:00 am", "11:30 am", "1:00 pm", "2:30 pm", "4:00 pm"],
+  saturday: ["8:00 am", "9:30 am", "11:00 am", "12:30 pm", "2:00 pm"],
+};
+const DAYS_AHEAD = 14;
+
+/* ===== Helpers ===== */
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+const form = $("#booking");
+const state = { step: 1 };
+const money = n => "$" + n;
+const esc = s => s.replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+/* ===== Build options ===== */
+$("#sizeOpts").innerHTML = SIZES.map(s => `
+  <label class="opt">
+    <input type="radio" name="size" value="${s.id}">
+    <span class="opt-body">
+      <span class="check" aria-hidden="true">✓</span>
+      <span class="opt-emoji" aria-hidden="true">${s.emoji}</span>
+      <strong>${s.name}</strong><span class="meta">${s.meta}</span>
+      <span class="extra">${s.extra ? "+" + money(s.extra) : "Base price"}</span>
+    </span>
+  </label>`).join("");
+
+function renderPackages() {
+  const extra = sizeOf()?.extra || 0;
+  const current = form.elements.pkg?.value;
+  $("#pkgOpts").innerHTML = PACKAGES.map(p => `
+    <label class="opt opt-pkg${p.featured ? " featured" : ""}">
+      ${p.featured ? '<span class="ribbon">⭐ Most popular</span>' : ""}
+      <input type="radio" name="pkg" value="${p.id}"${p.id === current ? " checked" : ""}>
+      <span class="opt-body">
+        <span class="check" aria-hidden="true">✓</span>
+        <span class="opt-emoji" aria-hidden="true">${p.emoji}</span>
+        <strong>${esc(p.name)}</strong><span class="meta">${p.meta}</span>
+        <span class="price">${money(p.price + extra)}<small>from</small></span>
+        <ul>${p.perks.map(x => `<li>${esc(x)}</li>`).join("")}</ul>
+      </span>
+    </label>`).join("");
+}
+
+const days = [];
+for (let i = 1; days.length < DAYS_AHEAD; i++) {
+  const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() + i);
+  days.push(d);
+}
+const dayKey = d => `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+$("#dayOpts").innerHTML = days.map(d => {
+  const closed = d.getDay() === 0;
+  return `<label class="chip day" title="${closed ? "Closed Sundays" : ""}">
+    <input type="radio" name="day" value="${dayKey(d)}"${closed ? " disabled" : ""}>
+    <span><small>${d.toLocaleDateString("en-AU", { weekday: "short" })}</small><b>${d.getDate()}</b><small>${closed ? "Closed" : d.toLocaleDateString("en-AU", { month: "short" })}</small></span>
+  </label>`;
+}).join("");
+
+function renderSlots() {
+  const day = dayOf();
+  if (!day) return;
+  const list = day.getDay() === 6 ? SLOTS.saturday : SLOTS.weekday;
+  const current = form.elements.time?.value;
+  $("#timeOpts").innerHTML = list.map(t =>
+    `<label class="chip"><input type="radio" name="time" value="${t}"${t === current ? " checked" : ""}><span>${t}</span></label>`
+  ).join("");
+}
+
+/* ===== State lookups ===== */
+const val = n => form.elements[n]?.value || "";
+const sizeOf = () => SIZES.find(s => s.id === val("size"));
+const pkgOf = () => PACKAGES.find(p => p.id === val("pkg"));
+const dayOf = () => days.find(d => dayKey(d) === val("day"));
+const price = () => (pkgOf()?.price || 0) + (sizeOf()?.extra || 0);
+const longDate = d => d.toLocaleDateString("en-AU", { weekday: "long", day: "numeric", month: "long" });
+
+function stepValid(step) {
+  if (step === 1) return !!sizeOf();
+  if (step === 2) return !!pkgOf();
+  if (step === 3) return !!dayOf() && !!val("time") &&
+    ["name", "dog", "phone", "suburb", "address"].every(n => val(n).trim());
+  return true;
+}
+
+/* ===== Render ===== */
+function update() {
+  $("#next").disabled = !stepValid(state.step);
+  $("#back").style.visibility = state.step === 1 ? "hidden" : "visible";
+  $("#next").innerHTML = state.step === 3 ? 'Confirm booking <span class="paw">🐾</span>' : 'Next <span class="paw">🐾</span>';
+  $("#total").innerHTML = pkgOf() ? `Estimate: <b>${money(price())}</b>` : "";
+}
+
+function go(step, quiet) {
+  state.step = step;
+  $$(".step-pane").forEach(p => p.hidden = +p.dataset.step !== step);
+  $$(".progress li").forEach(li => {
+    const n = +li.dataset.step;
+    li.classList.toggle("done", n < step || step === 4);
+    li.classList.toggle("current", n === step && step !== 4);
+    if (n === step) li.setAttribute("aria-current", "step"); else li.removeAttribute("aria-current");
+  });
+  $("#stepActions").hidden = step === 4;
+  if (step === 2) { renderPackages(); $("#sizeNote").textContent = sizeOf().name.toLowerCase(); }
+  if (step === 4) fillSummary();
+  update();
+  if (quiet) return;
+  $(`.step-pane[data-step="${step}"] h2`).focus({ preventScroll: true });
+  $(".progress").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function fillSummary() {
+  const s = sizeOf(), p = pkgOf();
+  $("#c-name").textContent = val("name").trim().split(" ")[0];
+  $("#c-dog").textContent = val("dog").trim();
+  $("#c-when").textContent = `${longDate(dayOf())} at ${val("time")}`;
+  $("#c-pkg").textContent = `${p.emoji} ${p.name}`;
+  $("#c-size").textContent = `${s.emoji} ${s.name} (${s.meta})`;
+  $("#c-where").textContent = `${val("address").trim()}, ${val("suburb").trim()}`;
+  $("#c-price").textContent = `from ${money(price())}`;
+  $("#c-phone").textContent = val("phone").trim();
+}
+
+/* ===== Events ===== */
+form.addEventListener("change", e => {
+  if (e.target.name === "day") renderSlots();
+  update();
+});
+form.addEventListener("input", update);
+form.addEventListener("submit", e => {
+  e.preventDefault();
+  if (stepValid(state.step)) go(state.step + 1);
+});
+$("#back").addEventListener("click", () => go(state.step - 1));
+$("#again").addEventListener("click", () => {
+  const keep = ["name", "phone", "suburb", "address"].map(n => [n, val(n)]);
+  form.reset();
+  keep.forEach(([n, v]) => form.elements[n].value = v);
+  $("#timeOpts").innerHTML = '<p class="slots-empty">Choose a day first ☝️</p>';
+  go(1);
+});
+
+/* Deep link: book.html?package=full preselects a package */
+const pre = new URLSearchParams(location.search).get("package");
+if (PACKAGES.some(p => p.id === pre)) {
+  renderPackages();
+  form.elements.pkg.value = pre;
+}
+
+go(1, true);
+</script>
+</body>
+</html>
