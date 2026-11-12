@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Suds &amp; Pups | Mobile Dog Grooming, Sunshine Coast</title>
+<meta name="description" content="Suds & Pups is a mobile dog grooming van that comes to your door across the Sunshine Coast, from Noosa to Caloundra.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ocean: #0096A8;
+    --ocean-deep: #00697A;
+    --lagoon: #7FDBDA;
+    --sun: #FFC229;
+    --sun-soft: #FFE8A3;
+    --coral: #FF7A59;
+    --coral-deep: #E85D3C;
+    --sand: #FFF7E8;
+    --sand-dark: #F4E3C1;
+    --ink: #1F3640;
+    --muted: #5C7480;
+    --white: #FFFFFF;
+    --radius: 26px;
+    --shadow: 0 10px 30px rgba(0, 105, 122, 0.12);
+    --shadow-lift: 0 20px 44px rgba(0, 105, 122, 0.22);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: "Nunito", system-ui, sans-serif;
+    color: var(--ink);
+    background: var(--sand);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  h1, h2, h3, .logo { font-family: "Fredoka", "Nunito", sans-serif; line-height: 1.1; }
+  a { color: inherit; }
+  .wrap { width: min(1120px, 100% - 32px); margin-inline: auto; }
+
+  /* ---------- Nav ---------- */
+  .nav {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(255, 247, 232, 0.88);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(0, 150, 168, 0.12);
+  }
+  .nav .wrap { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; gap: 12px; }
+  .logo { font-size: 1.6rem; font-weight: 700; color: var(--ocean-deep); text-decoration: none; display: flex; align-items: center; gap: 8px; }
+  .logo span { color: var(--coral); }
+  .nav-links { display: flex; gap: 26px; list-style: none; font-weight: 700; }
+  .nav-links a { text-decoration: none; color: var(--muted); transition: color .2s; }
+  .nav-links a:hover { color: var(--ocean); }
+
+  /* ---------- Buttons ---------- */
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: "Fredoka", sans-serif; font-weight: 600; font-size: 1.15rem;
+    padding: 16px 32px; border-radius: 999px; border: none; cursor: pointer;
+    text-decoration: none;
+    transition: transform .25s cubic-bezier(.34,1.56,.64,1), box-shadow .25s, background .25s;
+  }
+  .btn-primary { background: var(--coral); color: var(--white); box-shadow: 0 8px 0 var(--coral-deep), 0 14px 28px rgba(232, 93, 60, .3); }
+  .btn-primary:hover { transform: translateY(-4px) rotate(-1deg); background: #FF8A6B; box-shadow: 0 12px 0 var(--coral-deep), 0 22px 36px rgba(232, 93, 60, .35); }
+  .btn-primary:active { transform: translateY(4px); box-shadow: 0 3px 0 var(--coral-deep); }
+  .btn-ghost { background: var(--white); color: var(--ocean-deep); box-shadow: 0 6px 0 var(--lagoon); }
+  .btn-ghost:hover { transform: translateY(-4px); box-shadow: 0 10px 0 var(--lagoon); }
+  .btn-sm { padding: 10px 22px; font-size: 1rem; box-shadow: 0 5px 0 var(--coral-deep); }
+  .btn-sm:hover { box-shadow: 0 8px 0 var(--coral-deep); }
+  .btn .paw { display: inline-block; transition: transform .35s; }
+  .btn:hover .paw { transform: rotate(25deg) scale(1.2); }
+  .btn:focus-visible { outline: 3px solid var(--sun); outline-offset: 4px; }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    position: relative;
+    background: linear-gradient(180deg, #BFF0F0 0%, #E6FAF8 45%, var(--sand) 100%);
+    padding: 70px 0 0;
+    overflow: hidden;
+  }
+  .hero-grid { display: grid; grid-template-columns: 1.05fr .95fr; gap: 40px; align-items: center; position: relative; z-index: 2; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--white); color: var(--ocean-deep);
+    padding: 8px 16px; border-radius: 999px; font-weight: 800; font-size: .9rem;
+    box-shadow: var(--shadow); margin-bottom: 20px;
+  }
+  .hero h1 { font-size: clamp(2.6rem, 6.5vw, 4.6rem); color: var(--ocean-deep); margin-bottom: 18px; letter-spacing: -0.5px; }
+  .hero h1 .hl { color: var(--coral); position: relative; white-space: nowrap; }
+  .hero h1 .hl::after {
+    content: ""; position: absolute; left: -4px; right: -4px; bottom: 4px; height: 16px;
+    background: var(--sun); opacity: .55; border-radius: 10px; z-index: -1;
+  }
+  .tagline { font-size: clamp(1.1rem, 2.4vw, 1.35rem); color: var(--muted); max-width: 520px; margin-bottom: 32px; }
+  .hero-ctas { display: flex; flex-wrap: wrap; gap: 18px; align-items: center; }
+  .hero-trust { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 30px; font-weight: 700; color: var(--muted); font-size: .95rem; }
+  .hero-trust span { display: flex; align-items: center; gap: 6px; }
+
+  .hero-art { position: relative; }
+  .hero-art svg { width: 100%; height: auto; display: block; filter: drop-shadow(0 20px 30px rgba(0,105,122,.18)); }
+  .float { animation: float 4s ease-in-out infinite; }
+  @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+  .bubble { position: absolute; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #fff, rgba(255,255,255,.35) 60%, rgba(127,219,218,.3)); border: 2px solid rgba(255,255,255,.8); animation: rise 7s ease-in infinite; z-index: 1; pointer-events: none; }
+  @keyframes rise { 0% { transform: translateY(0) scale(.8); opacity: 0; } 15% { opacity: .9; } 100% { transform: translateY(-420px) scale(1.1); opacity: 0; } }
+
+  .wave-divider { display: block; width: 100%; height: 90px; margin-top: 40px; }
+
+  /* ---------- Sections ---------- */
+  section { padding: 90px 0; }
+  .section-head { text-align: center; max-width: 640px; margin: 0 auto 54px; }
+  .eyebrow { display: inline-block; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; font-size: .85rem; color: var(--coral); margin-bottom: 10px; }
+  .section-head h2 { font-size: clamp(2rem, 4.5vw, 3rem); color: var(--ocean-deep); margin-bottom: 14px; }
+  .section-head p { color: var(--muted); font-size: 1.1rem; }
+
+  /* ---------- How it works ---------- */
+  .how { background: var(--sand); }
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; counter-reset: step; }
+  .step {
+    background: var(--white); border-radius: var(--radius); padding: 40px 30px 34px; text-align: center;
+    box-shadow: var(--shadow); position: relative;
+    transition: transform .3s cubic-bezier(.34,1.56,.64,1), box-shadow .3s;
+  }
+  .step:hover { transform: translateY(-10px) rotate(-1deg); box-shadow: var(--shadow-lift); }
+  .step:nth-child(2):hover { transform: translateY(-10px) rotate(1deg); }
+  .step-num {
+    position: absolute; top: -18px; left: 50%; transform: translateX(-50%);
+    width: 42px; height: 42px; border-radius: 50%; background: var(--sun); color: var(--ink);
+    font-family: "Fredoka", sans-serif; font-weight: 700; font-size: 1.3rem;
+    display: grid; place-items: center; box-shadow: 0 4px 0 #E0A400;
+  }
+  .step-icon {
+    font-size: 4rem; width: 110px; height: 110px; margin: 6px auto 18px; border-radius: 50%;
+    display: grid; place-items: center; background: #E3F7F6;
+    transition: transform .4s cubic-bezier(.34,1.56,.64,1);
+  }
+  .step:hover .step-icon { transform: scale(1.12) rotate(-8deg); }
+  .step h3 { font-size: 1.5rem; color: var(--ocean-deep); margin-bottom: 10px; }
+  .step p { color: var(--muted); }
+
+  /* ---------- Packages ---------- */
+  .packages { background: linear-gradient(180deg, var(--sand) 0%, #E6FAF8 100%); position: relative; }
+  .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; align-items: stretch; }
+  .card {
+    background: var(--white); border-radius: var(--radius); padding: 38px 30px 32px;
+    box-shadow: var(--shadow); display: flex; flex-direction: column; position: relative;
+    border: 3px solid transparent;
+    transition: transform .3s cubic-bezier(.34,1.56,.64,1), box-shadow .3s, border-color .3s;
+  }
+  .card:hover { transform: translateY(-12px); box-shadow: var(--shadow-lift); border-color: var(--lagoon); }
+  .card.featured { background: var(--ocean-deep); color: var(--white); transform: scale(1.04); }
+  .card.featured:hover { transform: scale(1.04) translateY(-12px); border-color: var(--sun); }
+  .ribbon {
+    position: absolute; top: -16px; right: 24px; background: var(--sun); color: var(--ink);
+    font-weight: 800; font-size: .85rem; padding: 6px 14px; border-radius: 999px; box-shadow: 0 4px 0 #E0A400;
+  }
+  .card-emoji { font-size: 3.6rem; margin-bottom: 12px; display: inline-block; transition: transform .4s cubic-bezier(.34,1.56,.64,1); }
+  .card:hover .card-emoji { transform: scale(1.18) rotate(10deg); }
+  .card h3 { font-size: 1.7rem; margin-bottom: 4px; color: var(--ocean-deep); }
+  .card.featured h3 { color: var(--white); }
+  .card .sub { color: var(--muted); font-weight: 600; margin-bottom: 18px; }
+  .card.featured .sub { color: var(--lagoon); }
+  .price { font-family: "Fredoka", sans-serif; font-size: 3rem; font-weight: 700; color: var(--coral); line-height: 1; margin-bottom: 4px; }
+  .card.featured .price { color: var(--sun); }
+  .price small { font-size: 1rem; font-weight: 500; color: var(--muted); margin-left: 4px; }
+  .card.featured .price small { color: var(--lagoon); }
+  .card ul { list-style: none; margin: 22px 0 28px; display: grid; gap: 10px; flex: 1; }
+  .card li { display: flex; gap: 10px; align-items: flex-start; }
+  .card li::before { content: "✓"; flex: none; width: 22px; height: 22px; border-radius: 50%; background: #E3F7F6; color: var(--ocean); font-weight: 800; font-size: .8rem; display: grid; place-items: center; margin-top: 2px; }
+  .card.featured li::before { background: rgba(255,255,255,.15); color: var(--sun); }
+  .card .btn { justify-content: center; width: 100%; }
+  .card .btn-ghost { box-shadow: 0 6px 0 var(--lagoon); border: 2px solid var(--lagoon); }
+  .card.featured .btn-primary { background: var(--sun); color: var(--ink); box-shadow: 0 8px 0 #E0A400; }
+  .card.featured .btn-primary:hover { background: #FFD25C; box-shadow: 0 12px 0 #E0A400; }
+  .price-note { text-align: center; margin-top: 34px; color: var(--muted); font-weight: 600; }
+
+  /* ---------- Reviews ---------- */
+  .reviews { background: var(--sand); }
+  .review-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px; }
+  .review {
+    background: var(--white); border-radius: var(--radius); padding: 36px 34px; box-shadow: var(--shadow);
+    position: relative; transition: transform .3s cubic-bezier(.34,1.56,.64,1), box-shadow .3s;
+  }
+  .review:hover { transform: translateY(-8px) rotate(.5deg); box-shadow: var(--shadow-lift); }
+  .review::before { content: "“"; position: absolute; top: -10px; right: 26px; font-family: Georgia, serif; font-size: 7rem; color: var(--lagoon); opacity: .45; line-height: 1; }
+  .stars { color: var(--sun); font-size: 1.4rem; letter-spacing: 3px; margin-bottom: 12px; }
+  .review blockquote { font-size: 1.15rem; font-weight: 600; margin-bottom: 22px; position: relative; }
+  .reviewer { display: flex; align-items: center; gap: 14px; }
+  .avatar { width: 58px; height: 58px; border-radius: 50%; display: grid; place-items: center; font-size: 2rem; flex: none; }
+  .reviewer strong { display: block; font-family: "Fredoka", sans-serif; font-size: 1.15rem; color: var(--ocean-deep); }
+  .reviewer span { color: var(--muted); font-size: .95rem; }
+
+  /* ---------- Service area ---------- */
+  .area { padding: 0 0 90px; background: var(--sand); }
+  .area-box {
+    background: linear-gradient(120deg, var(--ocean) 0%, var(--ocean-deep) 100%);
+    color: var(--white); border-radius: 34px; padding: 50px 46px; position: relative; overflow: hidden;
+    display: grid; grid-template-columns: 1.3fr 1fr; gap: 30px; align-items: center;
+  }
+  .area-box h2 { font-size: clamp(1.8rem, 4vw, 2.6rem); margin-bottom: 12px; }
+  .area-box p { color: #D7F5F4; font-size: 1.1rem; margin-bottom: 22px; }
+  .suburbs { display: flex; flex-wrap: wrap; gap: 10px; }
+  .suburbs span {
+    background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.25); padding: 6px 14px;
+    border-radius: 999px; font-weight: 700; font-size: .92rem; transition: background .2s, transform .2s;
+  }
+  .suburbs span:hover { background: var(--sun); color: var(--ink); transform: translateY(-3px); }
+  .area-art svg { width: 100%; height: auto; display: block; }
+
+  /* ---------- CTA band ---------- */
+  .cta-band { background: var(--sun); text-align: center; padding: 70px 0; position: relative; overflow: hidden; }
+  .cta-band h2 { font-size: clamp(2rem, 5vw, 3rem); color: var(--ink); margin-bottom: 10px; }
+  .cta-band p { font-size: 1.15rem; margin-bottom: 30px; color: #5B4400; font-weight: 600; }
+  .cta-band .deco { position: absolute; font-size: 4rem; opacity: .35; }
+
+  /* ---------- Footer ---------- */
+  footer { background: var(--ink); color: #C9DCE2; padding: 60px 0 30px; }
+  .foot-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 36px; margin-bottom: 40px; }
+  footer .logo { color: var(--white); margin-bottom: 12px; }
+  footer h4 { font-family: "Fredoka", sans-serif; color: var(--sun); font-size: 1.15rem; margin-bottom: 14px; }
+  footer ul { list-style: none; display: grid; gap: 8px; }
+  footer a { text-decoration: none; transition: color .2s; }
+  footer a:hover { color: var(--lagoon); }
+  .foot-bottom { border-top: 1px solid rgba(255,255,255,.12); padding-top: 22px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; font-size: .9rem; color: #8EA7B0; }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 900px) {
+    .hero-grid { grid-template-columns: 1fr; text-align: center; }
+    .tagline { margin-inline: auto; }
+    .hero-ctas, .hero-trust { justify-content: center; }
+    .hero-art { max-width: 520px; margin: 0 auto; }
+    .steps, .cards { grid-template-columns: 1fr; max-width: 480px; margin-inline: auto; gap: 40px; }
+    .card.featured, .card.featured:hover { transform: none; }
+    .card.featured:hover { transform: translateY(-8px); }
+    .review-grid { grid-template-columns: 1fr; }
+    .area-box { grid-template-columns: 1fr; padding: 40px 28px; }
+    .area-art { max-width: 360px; margin: 0 auto; }
+    .foot-grid { grid-template-columns: 1fr 1fr; }
+    .foot-grid > div:first-child { grid-column: 1 / -1; }
+  }
+  @media (max-width: 640px) {
+    .nav-links { display: none; }
+    section { padding: 70px 0; }
+    .hero { padding-top: 44px; }
+    .btn { padding: 15px 26px; }
+    .hero-ctas .btn { width: 100%; justify-content: center; }
+    .review { padding: 30px 24px; }
+    .foot-grid { grid-template-columns: 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<nav class="nav" aria-label="Main">
+  <div class="wrap">
+    <a href="#top" class="logo">🫧 Suds <span>&amp;</span> Pups</a>
+    <ul class="nav-links">
+      <li><a href="#how">How it works</a></li>
+      <li><a href="#packages">Packages</a></li>
+      <li><a href="#reviews">Reviews</a></li>
+      <li><a href="#area">Service area</a></li>
+    </ul>
+    <a href="#book" class="btn btn-primary btn-sm">Book <span class="paw">🐾</span></a>
+  </div>
+</nav>
+
+<!-- ============ HERO ============ -->
+<header class="hero" id="top">
+  <span class="bubble" style="width:26px;height:26px;left:6%;bottom:40px;animation-delay:0s"></span>
+  <span class="bubble" style="width:16px;height:16px;left:18%;bottom:10px;animation-delay:2.2s"></span>
+  <span class="bubble" style="width:34px;height:34px;left:44%;bottom:0;animation-delay:4s"></span>
+  <span class="bubble" style="width:20px;height:20px;left:88%;bottom:60px;animation-delay:1.3s"></span>
+  <span class="bubble" style="width:14px;height:14px;left:70%;bottom:20px;animation-delay:5.2s"></span>
+
+  <div class="wrap hero-grid">
+    <div>
+      <div class="badge">☀️ Proudly Sunshine Coast, QLD</div>
+      <h1>Spa day for your pup, <span class="hl">at your door.</span></h1>
+      <p class="tagline">Our grooming van rolls up to your driveway, so your best mate gets pampered while you get on with your day. No car trips, no kennels, no fuss. Just a fresh, fluffy, happy dog.</p>
+      <div class="hero-ctas">
+        <a href="#book" class="btn btn-primary">Book a Groom <span class="paw">🐾</span></a>
+        <a href="#packages" class="btn btn-ghost">See packages</a>
+      </div>
+      <div class="hero-trust">
+        <span>⭐ 4.9 from 300+ locals</span>
+        <span>🛡️ Fully insured</span>
+        <span>🌿 Aussie-made, eco shampoos</span>
+      </div>
+    </div>
+
+    <div class="hero-art">
+      <!-- Sunshine Coast scene: Glass House Mountains, surf, palms and the Suds & Pups van -->
+      <svg viewBox="0 0 520 440" role="img" aria-label="Illustration of the Suds and Pups grooming van parked by the beach with the Glass House Mountains and a sunny sky behind it">
+        <defs>
+          <clipPath id="sceneClip"><rect x="0" y="0" width="520" height="440" rx="40"/></clipPath>
+          <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#5FD0E0"/><stop offset="1" stop-color="#D6F6F4"/>
+          </linearGradient>
+          <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#14B3C4"/><stop offset="1" stop-color="#0A8EA0"/>
+          </linearGradient>
+        </defs>
+        <g clip-path="url(#sceneClip)">
+          <rect width="520" height="440" fill="url(#sky)"/>
+          <!-- sun -->
+          <g>
+            <circle cx="410" cy="88" r="58" fill="#FFC229" opacity=".25"/>
+            <circle cx="410" cy="88" r="42" fill="#FFC229"/>
+          </g>
+          <!-- clouds -->
+          <g fill="#fff" opacity=".9">
+            <ellipse cx="110" cy="70" rx="44" ry="16"/><ellipse cx="140" cy="60" rx="30" ry="18"/>
+            <ellipse cx="300" cy="110" rx="34" ry="12"/><ellipse cx="320" cy="102" rx="22" ry="13"/>
+          </g>
+          <!-- Glass House Mountains silhouette -->
+          <path d="M0 240 L40 230 L70 170 L84 150 L98 172 L118 226 L150 230 L172 190 L182 160 L194 128 L206 160 L218 205 L246 228 L270 214 L290 186 L304 174 L318 196 L336 230 L380 236 L410 220 L440 232 L520 236 L520 270 L0 270 Z" fill="#3E8E7E"/>
+          <path d="M0 252 L60 242 L120 248 L200 238 L280 246 L360 240 L440 246 L520 242 L520 280 L0 280 Z" fill="#2F7A6B"/>
+          <!-- ocean -->
+          <rect x="0" y="262" width="520" height="80" fill="url(#sea)"/>
+          <path d="M0 282 q20 -8 40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0" fill="none" stroke="#BFF5F2" stroke-width="3" stroke-linecap="round" opacity=".8"/>
+          <path d="M-20 306 q20 -8 40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0 t40 0" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".7"/>
+          <!-- surfer -->
+          <g transform="translate(96 278)">
+            <ellipse cx="0" cy="12" rx="22" ry="4" fill="#FF7A59"/>
+            <rect x="-3" y="-10" width="6" height="20" rx="3" fill="#1F3640"/>
+            <circle cx="0" cy="-15" r="5" fill="#1F3640"/>
+            <path d="M-3 -5 L-14 -10 M3 -5 L14 -2" stroke="#1F3640" stroke-width="3" stroke-linecap="round"/>
+          </g>
+          <!-- sand -->
+          <path d="M0 330 Q130 312 260 326 T520 322 L520 440 L0 440 Z" fill="#F7DFAE"/>
+          <path d="M0 360 Q160 344 300 358 T520 352 L520 440 L0 440 Z" fill="#F2D196"/>
+          <!-- palm tree -->
+          <g transform="translate(470 360)">
+            <path d="M0 0 C -6 -40 -2 -90 10 -130" stroke="#8A5A2B" stroke-width="10" fill="none" stroke-linecap="round"/>
+            <g fill="#2FA36B">
+              <path d="M10 -130 C -20 -150 -50 -140 -66 -116 C -40 -128 -16 -126 10 -130Z"/>
+              <path d="M10 -130 C 30 -160 60 -158 76 -140 C 50 -144 30 -138 10 -130Z"/>
+              <path d="M10 -130 C -10 -170 -40 -176 -56 -166 C -30 -160 -10 -150 10 -130Z"/>
+              <path d="M10 -130 C 30 -120 50 -96 52 -76 C 36 -96 24 -112 10 -130Z"/>
+              <path d="M10 -130 C -14 -116 -30 -94 -32 -72 C -18 -94 -4 -112 10 -130Z"/>
+            </g>
+            <circle cx="6" cy="-126" r="5" fill="#8A5A2B"/><circle cx="14" cy="-124" r="5" fill="#8A5A2B"/>
+          </g>
+          <!-- frangipani on sand -->
+          <g transform="translate(40 410)">
+            <g fill="#fff"><ellipse cx="0" cy="-9" rx="6" ry="10"/><ellipse cx="9" cy="-2" rx="6" ry="10" transform="rotate(72 9 -2)"/><ellipse cx="5" cy="8" rx="6" ry="10" transform="rotate(144 5 8)"/><ellipse cx="-5" cy="8" rx="6" ry="10" transform="rotate(216 -5 8)"/><ellipse cx="-9" cy="-2" rx="6" ry="10" transform="rotate(288 -9 -2)"/></g>
+            <circle r="5" fill="#FFC229"/>
+          </g>
+
+          <!-- VAN -->
+          <g class="float" transform="translate(0 0)">
+            <ellipse cx="250" cy="412" rx="150" ry="12" fill="#1F3640" opacity=".15"/>
+            <!-- body -->
+            <path d="M110 300 Q110 270 140 270 L320 270 Q350 270 366 296 L394 340 Q402 352 402 366 L402 386 Q402 400 388 400 L124 400 Q110 400 110 386 Z" fill="#FFFFFF" stroke="#0A6F80" stroke-width="4"/>
+            <!-- stripe -->
+            <path d="M112 352 L400 352 L400 372 L112 372 Z" fill="#FF7A59"/>
+            <path d="M112 372 L400 372 L400 380 L112 380 Z" fill="#FFC229"/>
+            <!-- windows -->
+            <path d="M330 284 L352 284 Q360 284 366 294 L386 330 L330 330 Z" fill="#9BE3EA" stroke="#0A6F80" stroke-width="3"/>
+            <rect x="262" y="284" width="56" height="46" rx="10" fill="#9BE3EA" stroke="#0A6F80" stroke-width="3"/>
+            <!-- logo bubble -->
+            <circle cx="160" cy="312" r="32" fill="#E3F7F6" stroke="#0A6F80" stroke-width="3"/>
+            <text x="160" y="326" text-anchor="middle" font-size="38">🐶</text>
+            <text x="198" y="304" font-family="Fredoka, sans-serif" font-weight="700" font-size="17" fill="#0A6F80">Suds &amp;</text>
+            <text x="198" y="326" font-family="Fredoka, sans-serif" font-weight="700" font-size="17" fill="#FF7A59">Pups</text>
+            <text x="120" y="366" font-family="Nunito, sans-serif" font-weight="800" font-size="11" fill="#fff">MOBILE GROOMING · SUNSHINE COAST</text>
+            <!-- bubbles from roof -->
+            <g fill="#fff" stroke="#7FDBDA" stroke-width="2">
+              <circle cx="150" cy="256" r="9"/><circle cx="170" cy="242" r="13"/><circle cx="196" cy="252" r="8"/><circle cx="214" cy="236" r="6"/>
+            </g>
+            <!-- light & bumper -->
+            <rect x="388" y="350" width="12" height="10" rx="3" fill="#FFC229"/>
+            <!-- wheels -->
+            <g><circle cx="170" cy="400" r="26" fill="#1F3640"/><circle cx="170" cy="400" r="11" fill="#D6E3E8"/></g>
+            <g><circle cx="344" cy="400" r="26" fill="#1F3640"/><circle cx="344" cy="400" r="11" fill="#D6E3E8"/></g>
+          </g>
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <svg class="wave-divider" viewBox="0 0 1440 90" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0 40 C 240 90 480 0 720 40 S 1200 80 1440 30 L1440 90 L0 90 Z" fill="#FFF7E8"/>
+  </svg>
+</header>
+
+<main>
+<!-- ============ HOW IT WORKS ============ -->
+<section class="how" id="how">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">How it works</span>
+      <h2>Fresh pup in 3 easy steps</h2>
+      <p>Built for busy dog mums. Book between meetings, and we'll handle the rest.</p>
+    </div>
+    <div class="steps">
+      <article class="step">
+        <div class="step-num">1</div>
+        <div class="step-icon" aria-hidden="true">📱</div>
+        <h3>Book online</h3>
+        <p>Pick a package and a time slot in under a minute. Early mornings, lunch breaks and weekends all available.</p>
+      </article>
+      <article class="step">
+        <div class="step-num">2</div>
+        <div class="step-icon" aria-hidden="true">🚐</div>
+        <h3>We pull up</h3>
+        <p>Our self-contained van parks in your driveway with its own water and power. You don't even need to be home.</p>
+      </article>
+      <article class="step">
+        <div class="step-num">3</div>
+        <div class="step-icon" aria-hidden="true">🐶</div>
+        <h3>Fluffy &amp; fabulous</h3>
+        <p>One-on-one pampering, no cages or stressed-out waiting rooms. We text you a glam shot when they're done.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PACKAGES ============ -->
+<section class="packages" id="packages">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Packages</span>
+      <h2>Pick your pup's pamper</h2>
+      <p>Prices in AUD and include GST. Final price depends on size and coat. We'll confirm before we start.</p>
+    </div>
+    <div class="cards">
+      <article class="card">
+        <div class="card-emoji" aria-hidden="true">🛁</div>
+        <h3>Splash &amp; Dash</h3>
+        <p class="sub">The quick refresh</p>
+        <div class="price">$75<small>from</small></div>
+        <ul>
+          <li>Warm hydrobath with native botanical shampoo</li>
+          <li>Blow-dry &amp; brush-out</li>
+          <li>Nail trim &amp; ear clean</li>
+          <li>Spritz of eucalyptus cologne</li>
+        </ul>
+        <a href="#book" class="btn btn-ghost">Choose Splash</a>
+      </article>
+
+      <article class="card featured">
+        <span class="ribbon">⭐ Most popular</span>
+        <div class="card-emoji" aria-hidden="true">✂️</div>
+        <h3>The Full Groom</h3>
+        <p class="sub">Head-to-tail makeover</p>
+        <div class="price">$120<small>from</small></div>
+        <ul>
+          <li>Everything in Splash &amp; Dash</li>
+          <li>Breed-style haircut &amp; tidy</li>
+          <li>Paw pad &amp; hygiene trim</li>
+          <li>Teeth brush &amp; fresh-breath gel</li>
+          <li>Bandana or bow to finish</li>
+        </ul>
+        <a href="#book" class="btn btn-primary">Book Full Groom <span class="paw">🐾</span></a>
+      </article>
+
+      <article class="card">
+        <div class="card-emoji" aria-hidden="true">🌺</div>
+        <h3>Coastal Spa Day</h3>
+        <p class="sub">The ultimate pamper</p>
+        <div class="price">$165<small>from</small></div>
+        <ul>
+          <li>Everything in The Full Groom</li>
+          <li>Kakadu plum &amp; aloe coat mask</li>
+          <li>Pawdicure with macadamia balm</li>
+          <li>Blueberry facial &amp; massage</li>
+          <li>Take-home treat bag</li>
+        </ul>
+        <a href="#book" class="btn btn-ghost">Choose Spa Day</a>
+      </article>
+    </div>
+    <p class="price-note">🐕 Multi-dog households save 10% on every pup after the first.</p>
+  </div>
+</section>
+
+<!-- ============ REVIEWS ============ -->
+<section class="reviews" id="reviews">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Happy dog mums</span>
+      <h2>Tails are wagging</h2>
+    </div>
+    <div class="review-grid">
+      <article class="review">
+        <div class="stars" aria-label="5 out of 5 stars">★★★★★</div>
+        <blockquote>"I had back-to-back Teams calls and Suds &amp; Pups groomed Biscuit right outside my home office. She came back smelling like a eucalyptus forest. Absolute lifesaver!"</blockquote>
+        <div class="reviewer">
+          <div class="avatar" style="background:#FFE8A3" aria-hidden="true">🐕</div>
+          <div><strong>Jess M.</strong><span>Mooloolaba · mum to Biscuit the Cavoodle</span></div>
+        </div>
+      </article>
+      <article class="review">
+        <div class="stars" aria-label="5 out of 5 stars">★★★★★</div>
+        <blockquote>"Bondi used to shake the whole car ride to the groomer. Now he trots out to the van like he owns it. Gentle, on time, and always sends the cutest after photo."</blockquote>
+        <div class="reviewer">
+          <div class="avatar" style="background:#D6F6F4" aria-hidden="true">🦮</div>
+          <div><strong>Priya K.</strong><span>Noosa Heads · mum to Bondi the Golden Retriever</span></div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SERVICE AREA ============ -->
+<section class="area" id="area">
+  <div class="wrap">
+    <div class="area-box">
+      <div>
+        <span class="eyebrow" style="color:var(--sun)">📍 Service area</span>
+        <h2>From Noosa to Caloundra, and out to the hinterland.</h2>
+        <p>We come to you anywhere on the Sunshine Coast, Queensland. No travel fees within our zone.</p>
+        <div class="suburbs">
+          <span>Noosa</span><span>Coolum</span><span>Peregian</span><span>Maroochydore</span>
+          <span>Mooloolaba</span><span>Buderim</span><span>Sippy Downs</span><span>Kawana</span>
+          <span>Caloundra</span><span>Nambour</span><span>Maleny</span><span>Montville</span>
+        </div>
+      </div>
+      <div class="area-art" aria-hidden="true">
+        <!-- Stylised Sunshine Coast map -->
+        <svg viewBox="0 0 300 300">
+          <circle cx="150" cy="150" r="140" fill="rgba(255,255,255,.08)"/>
+          <path d="M170 20 C 190 60 186 90 200 120 C 214 152 196 186 206 220 C 214 250 200 270 196 290 L80 290 L80 20 Z" fill="#7FD3A8" opacity=".9"/>
+          <path d="M170 20 C 190 60 186 90 200 120 C 214 152 196 186 206 220 C 214 250 200 270 196 290" fill="none" stroke="#FFF7E8" stroke-width="6" stroke-linecap="round"/>
+          <g font-family="Nunito, sans-serif" font-weight="800" font-size="13" fill="#fff">
+            <circle cx="186" cy="48" r="7" fill="#FFC229"/><text x="122" y="52">Noosa</text>
+            <circle cx="196" cy="110" r="7" fill="#FFC229"/><text x="122" y="114">Coolum</text>
+            <circle cx="202" cy="160" r="7" fill="#FFC229"/><text x="96" y="164">Maroochydore</text>
+            <circle cx="200" cy="246" r="7" fill="#FFC229"/><text x="114" y="250">Caloundra</text>
+          </g>
+          <!-- Glass House peaks inland -->
+          <path d="M90 230 l10 -26 l10 26 Z M108 230 l8 -18 l8 18 Z" fill="#2F7A6B"/>
+          <text x="232" y="150" font-size="30">🌊</text>
+          <text x="226" y="60" font-size="34">☀️</text>
+          <text x="138" y="210" font-size="30">🚐</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BOOK CTA ============ -->
+<section class="cta-band" id="book">
+  <span class="deco" style="left:5%;top:20%">🐾</span>
+  <span class="deco" style="right:7%;top:15%">🌴</span>
+  <span class="deco" style="left:12%;bottom:12%">🫧</span>
+  <span class="deco" style="right:14%;bottom:10%">🦴</span>
+  <div class="wrap">
+    <h2>Ready for a squeaky-clean pup?</h2>
+    <p>Spots fill fast. Lock in your driveway date today!</p>
+    <a href="tel:+61754000000" class="btn btn-primary">Book a Groom <span class="paw">🐾</span></a>
+  </div>
+</section>
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="logo">🫧 Suds <span>&amp;</span> Pups</div>
+        <p>Mobile dog grooming that comes to you. Locally owned and loved on the Sunshine Coast. 🐨</p>
+      </div>
+      <div>
+        <h4>Say g'day</h4>
+        <ul>
+          <li>📞 <a href="tel:+61754000000">(07) 5400 0000</a></li>
+          <li>✉️ <a href="mailto:hello@sudsandpups.com.au">hello@sudsandpups.com.au</a></li>
+          <li>📍 Sunshine Coast, QLD</li>
+        </ul>
+      </div>
+      <div>
+        <h4>Grooming hours</h4>
+        <ul>
+          <li>Mon–Fri · 7am–6pm</li>
+          <li>Sat · 8am–4pm</li>
+          <li>Sun · Closed (beach day 🏖️)</li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 Suds &amp; Pups Mobile Grooming. All rights reserved.</span>
+      <span>Made with 💛 on the Sunshine Coast</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
