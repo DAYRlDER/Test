@@ -6,3 +6,6 @@ python-dotenv
 
 # Phase 2 - keyword search
 rank-bm25
+
+# Phase 3 - Claude API
+anthropic

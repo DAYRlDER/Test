@@ -21,3 +21,9 @@ PAGES_FILE = DATA_DIR / "pages.json"
 CHUNK_WORDS = 500          # target words per chunk
 CHUNK_OVERLAP = 100        # words repeated between neighbouring chunks
 TOP_K = 5                  # chunks returned per question
+
+# --- Answering with Claude ---
+COMPANY_NAME = "Australian Unity"
+MODEL = "claude-sonnet-5-5"   # latest Sonnet (checked against the Claude API docs, Nov 2026)
+EFFORT = "low"                # how hard the model thinks: low is fast/cheap and fine for short answers
+MAX_TOKENS = 2000
