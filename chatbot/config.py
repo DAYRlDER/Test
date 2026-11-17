@@ -26,6 +26,9 @@ PAGES_FILE = DATA_DIR / "pages.json"
 CHUNK_WORDS = 500          # target words per chunk
 CHUNK_OVERLAP = 100        # words repeated between neighbouring chunks
 TOP_K = 5                  # chunks returned per question
+ADD_NEXT_CHUNK = True      # also give the model the chunk that follows each match on the same
+                           # page, so text cut off at a chunk boundary (e.g. the rest of a
+                           # table) is not lost; about a third more text per question
 
 # --- Answering with Claude ---
 COMPANY_NAME = "Australian Unity"

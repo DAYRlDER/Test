@@ -38,18 +38,66 @@ def tokenize(text: str) -> list[str]:
     return out
 
 
-def chunk_page(page: dict, size: int, overlap: int) -> list[dict]:
-    """Split one page into ~`size`-word chunks built from whole lines, with ~`overlap` words repeated."""
-    # Break very long lines into word groups so no single line exceeds `size`.
-    lines = []
-    for line in page["text"].splitlines():
-        words = line.split()
-        for i in range(0, len(words), size):
-            lines.append(" ".join(words[i:i + size]))
+def _words(lines: list[str]) -> int:
+    return sum(len(line.split()) for line in lines)
 
+
+def _is_row(line: str) -> bool:
+    return " | " in line  # the crawler writes table rows as "cell | cell"
+
+
+def page_units(text: str, size: int) -> list[list[str]]:
+    """Group a page's lines into units that should not be split across chunks.
+
+    A table (its rows, short sub-headings between rows such as "Other extras",
+    and a short caption line just above it such as "Dental") is one unit, so a
+    row is never separated from the rest of its table. A table longer than
+    `size` is split into row groups, each repeating the header row. Every other
+    line is its own unit; very long lines are cut into `size`-word pieces.
+    """
+    lines = text.splitlines()
+    units, i = [], 0
+    while i < len(lines):
+        line = lines[i]
+        if not _is_row(line):
+            words = line.split()
+            units.extend([" ".join(words[j:j + size])] for j in range(0, len(words), size))
+            i += 1
+            continue
+        table = [line]
+        i += 1
+        while i < len(lines):
+            if _is_row(lines[i]):
+                table.append(lines[i])
+            elif len(lines[i].split()) <= 4 and i + 1 < len(lines) and _is_row(lines[i + 1]):
+                table.append(lines[i])  # sub-heading inside the table
+            else:
+                break
+            i += 1
+        if units and len(units[-1]) == 1 and len(units[-1][0].split()) <= 4:
+            table.insert(0, units.pop()[0])  # caption just above the table
+        if _words(table) <= size:
+            units.append(table)
+            continue
+        header = next(r for r in table if _is_row(r))
+        group = []
+        for row in table:
+            if group and _words(group) + len(row.split()) > size:
+                units.append(group)
+                group = [header]
+            group.append(row)
+        units.append(group)
+    return units
+
+
+def chunk_page(page: dict, size: int, overlap: int) -> list[dict]:
+    """Split one page into ~`size`-word chunks built from whole lines, with ~`overlap` words repeated.
+
+    Tables are kept whole (see page_units), so a chunk can run a little over `size`.
+    """
     chunks, current, count = [], [], 0
-    for line in lines:
-        n = len(line.split())
+    for unit in page_units(page["text"], size):
+        n = _words(unit)
         if current and count + n > size:
             chunks.append(current)
             # Start the next chunk with the tail of this one (the overlap).
@@ -59,8 +107,8 @@ def chunk_page(page: dict, size: int, overlap: int) -> list[dict]:
                 if tail_count > overlap:
                     break
                 tail.insert(0, prev)
-            current, count = tail, sum(len(t.split()) for t in tail)
-        current.append(line)
+            current, count = tail, _words(tail)
+        current.extend(unit)
         count += n
     if current:
         chunks.append(current)
@@ -82,8 +130,34 @@ class SearchIndex:
         # Title is included so words in the page title help matching.
         self.bm25 = BM25Okapi([tokenize(c["title"] + " " + c["text"]) for c in self.chunks])
         self.page_count = len(pages)
+        self.by_id = {c["chunk_id"]: c for c in self.chunks}
 
-    def search(self, question: str, k: int = config.TOP_K) -> list[dict]:
+    def next_lines(self, chunk: dict) -> list[str]:
+        """Lines of the chunk after `chunk` on the same page, minus the overlap they share."""
+        url, _, n = chunk["chunk_id"].rpartition("#")
+        nxt = self.by_id.get(f"{url}#{int(n) + 1}")
+        if not nxt:
+            return []
+        cur, new = chunk["text"].splitlines(), nxt["text"].splitlines()
+        shared = next((j for j in range(min(len(cur), len(new)), 0, -1) if cur[-j:] == new[:j]), 0)
+        return new[shared:]
+
+    def search(self, question: str, k: int = config.TOP_K,
+               add_next: bool = config.ADD_NEXT_CHUNK) -> list[dict]:
+        """Top `k` chunks for the question. With `add_next`, each result's text also
+        includes the next chunk of its page, unless that chunk is itself a result."""
+        results = self._search(question, k)
+        if add_next:
+            picked = {r["chunk_id"] for r in results}
+            for r in results:
+                url, _, n = r["chunk_id"].rpartition("#")
+                if f"{url}#{int(n) + 1}" not in picked:
+                    extra = self.next_lines(r)
+                    if extra:
+                        r["text"] += "\n" + "\n".join(extra)
+        return results
+
+    def _search(self, question: str, k: int) -> list[dict]:
         tokens = tokenize(question)
         if not tokens:
             return []

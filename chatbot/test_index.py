@@ -5,7 +5,7 @@ import tempfile
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from index import SearchIndex  # noqa: E402
+from index import SearchIndex, chunk_page, page_units  # noqa: E402
 
 fails = 0
 
@@ -40,6 +40,44 @@ check("dedupe makes room for other pages", any(r["url"].endswith("/how-to-claim"
       [r["url"] for r in res])
 check("k still respected", len(ix.search("dental claim family glasses", k=2)) == 2)
 check("zero-score chunks dropped", ix.search("zzzz") == [])
+
+# --- Table-aware chunking ---
+TABLE = ["Dental", "Benefit | Waiting period", "General dental | 2 months", "Major dental | 12 months",
+         "Other extras", "Glasses | 6 months", "Hearing aids | 12 months"]
+filler = ["word " * 20] * 6  # 120 words of plain text
+text = "\n".join(filler + TABLE + ["After the table."])
+units = page_units(text, 500)
+check("table is one unit with caption and sub-heading", TABLE in units, units)
+chunks = chunk_page({"url": "u", "title": "t", "text": text}, size=130, overlap=0)
+holding = [c for c in chunks if "Hearing aids | 12 months" in c["text"]]
+check("table not split across chunks",
+      len(holding) == 1 and all(row in holding[0]["text"] for row in TABLE), [c["text"] for c in chunks])
+
+big = "\n".join(["Benefit | Wait"] + [f"Service number {i} with a long name | {i} months" for i in range(40)])
+groups = page_units(big, 60)
+check("long table split into groups", len(groups) > 1, len(groups))
+check("each group repeats header", all(g[0] == "Benefit | Wait" for g in groups), [g[0] for g in groups])
+check("no rows lost", sum(len(g) - 1 for g in groups) == 40)
+check("short line not followed by a row is not table", page_units("A | b\nShort\nPlain text here.", 500)
+      == [["A | b"], ["Short"], ["Plain text here."]])
+
+# --- Next-chunk expansion ---
+long_page = {"url": BASE + "/long", "title": "Long",
+             "text": "\n".join([f"Line {i} about waiting periods." for i in range(5)]
+                               + [f"Line {i} filler words here." for i in range(5, 200)]
+                               + ["Hearing aids | 12 months"])}
+with tempfile.TemporaryDirectory() as d:
+    f = Path(d) / "pages.json"
+    f.write_text(json.dumps([long_page]))
+    ix = SearchIndex(f)
+first = [r for r in ix.search("waiting periods", k=1)]
+plain = ix.search("waiting periods", k=1, add_next=False)
+check("page has several chunks", len(ix.chunks) >= 2, len(ix.chunks))
+check("next chunk added to result", first and first[0]["chunk_id"].endswith("#0")
+      and len(first[0]["text"]) > len(plain[0]["text"]), first)
+lines = first[0]["text"].splitlines()
+check("overlap not repeated", len(lines) == len(set(lines)), len(lines) - len(set(lines)))
+check("chunks in index not modified", ix.chunks[0]["text"] == plain[0]["text"])
 
 # Real data: the claim page must be retrieved for the dental claim question.
 real = SearchIndex()
