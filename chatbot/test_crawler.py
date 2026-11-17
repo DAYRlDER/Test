@@ -3,7 +3,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from crawler import extract  # noqa: E402
+from crawler import extract, in_scope  # noqa: E402
 
 fails = 0
 
@@ -50,6 +50,13 @@ check("back-to-back repeat dropped", lines.count("Done") == 1, lines)
 _, text, _ = extract("<main><div>Optical</div><div>6 months</div>"
                      "<div>Dental</div><div>6 months</div></main>")
 check("short repeats kept outside tables", text.splitlines().count("6 months") == 2, text)
+
+START = "https://www.australianunity.com.au/health-insurance"
+check("normal page in scope", in_scope(START + "/how-to-claim", START))
+check("corporate-affiliate excluded",
+      not in_scope(START + "/corporate-affiliate/bhpbilliton/families", START)
+      and not in_scope(START + "/corporate-affiliate", START))
+check("other site out of scope", not in_scope("https://example.com/health-insurance/x", START))
 
 print("FAILURES:", fails)
 sys.exit(1 if fails else 0)

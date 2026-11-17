@@ -11,6 +11,11 @@ MIN_TEXT_WORDS = 30        # pages with less text than this are skipped as "empt
 # Site-specific widgets to strip (regex on element id/class). These are the
 # quote-calculator boxes on Australian Unity product pages. Set to "" for other sites.
 REMOVE_CLASS_PATTERN = r"lhc-form|price-box"
+# URLs to leave out (regex on the URL), used by the crawler and the index.
+# Australian Unity has near-copies of its pages for each employer scheme under
+# /corporate-affiliate/; they crowd out the original pages in search results.
+# Set to "" for other sites.
+EXCLUDE_URL_PATTERN = r"/corporate-affiliate(/|$)"
 
 # --- Files ---
 BASE_DIR = Path(__file__).resolve().parent

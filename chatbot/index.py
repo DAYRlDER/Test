@@ -7,6 +7,7 @@ Test which chunks a question retrieves:
 import argparse
 import json
 import re
+from pathlib import Path
 
 from rank_bm25 import BM25Okapi
 
@@ -73,7 +74,9 @@ def chunk_page(page: dict, size: int, overlap: int) -> list[dict]:
 
 class SearchIndex:
     def __init__(self, pages_file=config.PAGES_FILE):
-        pages = json.loads(pages_file.read_text())
+        pages = json.loads(Path(pages_file).read_text())
+        if config.EXCLUDE_URL_PATTERN:  # also applies to data crawled before the rule existed
+            pages = [p for p in pages if not re.search(config.EXCLUDE_URL_PATTERN, p["url"])]
         self.chunks = [c for p in pages
                        for c in chunk_page(p, config.CHUNK_WORDS, config.CHUNK_OVERLAP)]
         # Title is included so words in the page title help matching.
@@ -85,8 +88,16 @@ class SearchIndex:
         if not tokens:
             return []
         scores = self.bm25.get_scores(tokens)
-        best = sorted(range(len(scores)), key=lambda i: scores[i], reverse=True)[:k]
-        return [{**self.chunks[i], "score": float(scores[i])} for i in best if scores[i] > 0]
+        results, seen = [], set()
+        for i in sorted(range(len(scores)), key=lambda i: scores[i], reverse=True):
+            if len(results) == k or scores[i] <= 0:
+                break
+            text = " ".join(self.chunks[i]["text"].split())
+            if text in seen:  # same text on another page: keep only the best-ranked copy
+                continue
+            seen.add(text)
+            results.append({**self.chunks[i], "score": float(scores[i])})
+        return results
 
 
 if __name__ == "__main__":

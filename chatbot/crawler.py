@@ -52,9 +52,11 @@ def normalize_url(url: str) -> str:
 
 
 def in_scope(url: str, start: str) -> bool:
-    """Same host, and the path is the start path or a sub-page of it."""
+    """Same host, the path is the start path or a sub-page of it, and not excluded."""
     u, s = urlparse(url), urlparse(start)
     if u.scheme not in ("http", "https") or u.netloc != s.netloc:
+        return False
+    if config.EXCLUDE_URL_PATTERN and re.search(config.EXCLUDE_URL_PATTERN, url):
         return False
     return u.path == s.path or u.path.startswith(s.path.rstrip("/") + "/")
 
