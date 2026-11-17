@@ -36,6 +36,10 @@ STRIP_TAGS = ["script", "style", "noscript", "nav", "header", "footer",
 # Inline tags that should not break a sentence onto a new line.
 INLINE_TAGS = ["a", "span", "strong", "em", "b", "i", "u", "sup", "sub", "small", "abbr"]
 
+# Repeated lines with at least this many words are dropped as boilerplate.
+# Shorter repeats (e.g. "12 months" in a table) are kept.
+MIN_DEDUPE_WORDS = 5
+
 # id/class names that indicate cookie or consent banners.
 BANNER_PATTERN = re.compile(r"cookie|consent|onetrust|gdpr", re.I)
 
@@ -101,13 +105,67 @@ def extract(html: str) -> tuple[str, str, list[str]]:
     for el in root.find_all(INLINE_TAGS):
         el.unwrap()
     root.smooth()  # merge the now-adjacent text pieces
+    # Turn each table row into one line ("Benefit | Waiting period") so values
+    # stay next to the label they belong to.
+    for table in reversed(root.find_all("table")):  # innermost tables first
+        table.replace_with("\n" + "\n".join(table_rows(table)) + "\n")
     lines, seen = [], set()
     for line in root.get_text("\n").splitlines():
         line = re.sub(r"\s+", " ", line).strip()
-        if line and line not in seen:  # drop blank and repeated lines
+        if not line or (lines and line == lines[-1]):
+            continue  # drop blank lines and back-to-back repeats
+        # Drop longer repeated lines (repeated banners/blurbs), but keep short
+        # ones: values like "12 months" legitimately appear many times.
+        if len(line.split()) >= MIN_DEDUPE_WORDS:
+            if line in seen:
+                continue
             seen.add(line)
-            lines.append(line)
+        lines.append(line)
     return title, "\n".join(lines), links
+
+
+def _span(cell, attr: str) -> int:
+    try:
+        return max(1, min(int(cell.get(attr, 1)), 50))
+    except (TypeError, ValueError):
+        return 1
+
+
+def table_rows(table) -> list[str]:
+    """Return one "cell | cell" line per table row, filling in rowspan/colspan cells."""
+    rows, carry = [], {}  # carry: column -> (text, rows still to fill)
+    for tr in table.find_all("tr"):
+        if tr.find_parent("table") is not table:
+            continue  # row of a nested table (already flattened)
+        cells, col = [], 0
+        tds = iter(tr.find_all(["td", "th"], recursive=False))
+        while True:
+            if col in carry:  # a cell from a row above spans into this row
+                text, left = carry.pop(col)
+                if left > 1:
+                    carry[col] = (text, left - 1)
+                cells.append(text)
+                col += 1
+                continue
+            td = next(tds, None)
+            if td is None:
+                break
+            text = re.sub(r"\s+", " ", td.get_text(" ", strip=True))
+            rowspan = _span(td, "rowspan")
+            for _ in range(_span(td, "colspan")):
+                cells.append(text)
+                if rowspan > 1:
+                    carry[col] = (text, rowspan - 1)
+                col += 1
+        for c in sorted(k for k in carry if k >= col):  # spans past the last cell
+            text, left = carry.pop(c)
+            if left > 1:
+                carry[c] = (text, left - 1)
+            cells.append(text)
+        merged = [c for i, c in enumerate(cells) if c and (i == 0 or c != cells[i - 1])]
+        if merged:
+            rows.append(" | ".join(merged))
+    return rows
 
 
 def crawl(start_url: str, max_pages: int) -> None:
