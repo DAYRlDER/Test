@@ -79,6 +79,21 @@ lines = first[0]["text"].splitlines()
 check("overlap not repeated", len(lines) == len(set(lines)), len(lines) - len(set(lines)))
 check("chunks in index not modified", ix.chunks[0]["text"] == plain[0]["text"])
 
+# --- Several queries (follow-ups) ---
+with tempfile.TemporaryDirectory() as d:
+    f = Path(d) / "pages.json"
+    f.write_text(json.dumps(pages))
+    ix = SearchIndex(f)
+res = ix.search_many(["glasses", "dental claim"], [1, 2], add_next=False)
+urls = [r["url"].rsplit("/", 1)[1] for r in res]
+check("counts taken from each query in order", urls[0] == "optical" and "how-to-claim" in urls[1:]
+      and len(res) == 3, urls)
+ids = [r["chunk_id"] for r in ix.search_many(["dental claim", "dental claim"], [2, 2])]
+check("no repeats across queries", len(ids) == len(set(ids)), ids)
+check("repeats not counted", len(ids) == 2, ids)  # only 2 distinct texts match "dental claim"
+check("one query same as search", [r["chunk_id"] for r in ix.search_many(["dental claim"], [3])]
+      == [r["chunk_id"] for r in ix.search("dental claim", k=3)])
+
 # Real data: the claim page must be retrieved for the dental claim question.
 real = SearchIndex()
 res = real.search("How do I make a dental claim?")

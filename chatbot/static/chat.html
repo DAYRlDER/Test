@@ -116,6 +116,11 @@ function renderAnswer(box, text, sources) {
 
 function scroll() { log.scrollTop = log.scrollHeight; }
 
+// Earlier questions and answers, sent with each question so follow-ups like
+// "What about optical?" make sense. Kept in this page only; reloading starts afresh.
+const pastTurns = [];
+const HISTORY_TURNS = 3;
+
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
   const question = input.value.trim();
@@ -128,12 +133,16 @@ form.addEventListener("submit", async (e) => {
   try {
     const res = await fetch("api/chat", {
       method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ question }),
+      body: JSON.stringify({ question, history: pastTurns.slice(-HISTORY_TURNS) }),
     });
     const data = await res.json().catch(() => ({}));
     box.textContent = "";
     if (!res.ok) { box.classList.add("error"); box.textContent = data.error || "Sorry, something went wrong."; }
-    else renderAnswer(box, data.answer, data.sources || []);
+    else {
+      renderAnswer(box, data.answer, data.sources || []);
+      pastTurns.push({ question, answer: data.answer });
+      if (pastTurns.length > HISTORY_TURNS) pastTurns.shift();
+    }
   } catch {
     box.textContent = ""; box.classList.add("error");
     box.textContent = "Couldn't reach the chatbot - check your connection and try again.";

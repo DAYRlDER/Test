@@ -1,6 +1,7 @@
 """Retrieval checks on the real crawled data - offline, no API key. Run: python test_retrieval.py
 
 Each question lists the page(s) that must appear in the top TOP_K search results.
+Follow-up questions are searched the way answer.py does it, with the previous question.
 Some also list text that must be in the retrieved chunks, so the model gets the
 actual answer and not just the right page. Add a case whenever you find a
 question the bot gets wrong because it never saw the right page.
@@ -10,6 +11,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import config  # noqa: E402
+from answer import search_queries  # noqa: E402
 from index import SearchIndex  # noqa: E402
 
 BASE = "https://www.australianunity.com.au/health-insurance"
@@ -45,6 +47,19 @@ CASES = [
     ("How do I contact Australian Unity?", ["/contact"], []),
 ]
 
+# Follow-ups: (previous question, follow-up, acceptable pages, text that must be retrieved).
+# The last case changes topic, so the earlier question must not crowd out the new one.
+FOLLOW_UPS = [
+    ("What is the waiting period for extras cover?", "What about pregnancy?",
+     ["/explained/waiting-periods"], ["Pregnancy and related services | 12 months"]),
+    ("What is the waiting period for extras cover?", "And for hearing aids?",
+     ["/explained/waiting-periods"], ["Hearing aids, health aids, health devices and orthotics | 12 months"]),
+    ("What is Lifetime Health Cover loading?", "How do I avoid it?", ["/explained/lhc"], []),
+    ("How do I make a dental claim?", "Can I do it in the app?", ["/how-to-claim", "/healthapp"], []),
+    ("What is the waiting period for extras cover?", "How can I pay my premiums?",
+     ["/using-your-cover/payments"], []),
+]
+
 # Questions keyword search is known to get wrong. They are still run and reported,
 # but do not fail the check. Remove one from here once it passes.
 KNOWN_GAPS = {
@@ -55,8 +70,12 @@ KNOWN_GAPS = {
 
 def run(index: SearchIndex, verbose: bool = True) -> int:
     fails = 0
-    for question, pages, texts in CASES:
-        results = index.search(question, config.TOP_K)
+    cases = [([], q, pages, texts) for q, pages, texts in CASES]
+    cases += [([{"question": prev, "answer": ""}], q, pages, texts) for prev, q, pages, texts in FOLLOW_UPS]
+    for history, question, pages, texts in cases:
+        results = index.search_many(*search_queries(question, history))
+        if history:
+            question = f"{history[-1]['question']} -> {question}"
         got = [r["url"].removeprefix(BASE) or "/" for r in results]
         ok_page = any(p in got for p in pages)
         joined = "\n".join(r["text"] for r in results if r["url"].removeprefix(BASE) in pages)
@@ -72,7 +91,7 @@ def run(index: SearchIndex, verbose: bool = True) -> int:
             for t in missing:
                 print(f"     missing text: {t!r}")
     if verbose:
-        print(f"FAILURES: {fails} of {len(CASES)}")
+        print(f"FAILURES: {fails} of {len(cases)}")
     return fails
 
 

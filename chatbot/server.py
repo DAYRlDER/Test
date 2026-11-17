@@ -5,7 +5,8 @@ Run:
 
 Endpoints:
     GET  /           the chat page (static/chat.html)
-    POST /api/chat   {"question": "..."} -> {"answer", "sources", "not_found"}
+    POST /api/chat   {"question": "...", "history": [{"question", "answer"}, ...]}
+                     -> {"answer", "sources", "not_found"}   (history is optional)
     GET  /api/health quick check that the index loaded
 """
 import os
@@ -35,6 +36,24 @@ def error(message: str, status: int):
     return jsonify({"error": message}), status
 
 
+def clean_history(raw) -> list[dict] | None:
+    """Keep the last MAX_HISTORY_TURNS {"question", "answer"} pairs, trimmed to size.
+    Returns None if the history is not in that shape."""
+    if raw is None:
+        return []
+    if not isinstance(raw, list):
+        return None
+    turns = []
+    for t in raw[-config.MAX_HISTORY_TURNS:] if config.MAX_HISTORY_TURNS else []:
+        if not (isinstance(t, dict) and isinstance(t.get("question"), str)
+                and isinstance(t.get("answer"), str)):
+            return None
+        if t["question"].strip():
+            turns.append({"question": t["question"].strip()[:config.MAX_QUESTION_CHARS],
+                          "answer": t["answer"].strip()[:config.MAX_ANSWER_CHARS]})
+    return turns
+
+
 @app.get("/")
 def chat_page():
     return send_from_directory(app.static_folder, "chat.html")
@@ -55,8 +74,12 @@ def chat():
     if len(question) > config.MAX_QUESTION_CHARS:
         return error(f"Please keep questions under {config.MAX_QUESTION_CHARS} characters.", 400)
 
+    history = clean_history(data.get("history"))
+    if history is None:
+        return error("Invalid conversation history.", 400)
+
     try:
-        result = answer(question, _index, client())
+        result = answer(question, _index, client(), history)
     except SystemExit:  # get_client() found no API key
         return error("The chatbot isn't set up yet (no API key on the server).", 503)
     except anthropic.AuthenticationError:

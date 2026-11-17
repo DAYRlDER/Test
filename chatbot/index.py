@@ -146,7 +146,21 @@ class SearchIndex:
                add_next: bool = config.ADD_NEXT_CHUNK) -> list[dict]:
         """Top `k` chunks for the question. With `add_next`, each result's text also
         includes the next chunk of its page, unless that chunk is itself a result."""
-        results = self._search(question, k)
+        return self.search_many([question], [k], add_next)
+
+    def search_many(self, queries: list[str], counts: list[int],
+                    add_next: bool = config.ADD_NEXT_CHUNK) -> list[dict]:
+        """The top counts[0] chunks for queries[0], then up to counts[1] more for
+        queries[1] (skipping chunks already picked), and so on."""
+        results, seen = [], set()
+        for query, count in zip(queries, counts):
+            added = 0
+            for r in self._search(query, len(results) + count):
+                text = " ".join(r["text"].split())
+                if added < count and r["chunk_id"] not in seen and text not in seen:
+                    seen.update((r["chunk_id"], text))
+                    results.append(r)
+                    added += 1
         if add_next:
             picked = {r["chunk_id"] for r in results}
             for r in results:

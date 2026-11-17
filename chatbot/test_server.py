@@ -38,6 +38,26 @@ for body, name in [({}, "missing"), ({"question": "   "}, "blank"), ({"question"
                    ({"question": "x" * 501}, "too long")]:
     r = c.post("/api/chat", json=body)
     check(f"rejects {name} question", r.status_code == 400 and "error" in r.json, r.json)
+# Follow-up history
+calls = []
+orig_answer = server.answer
+server.answer = lambda q, ix, cl, h: calls.append(h) or orig_answer(q, ix, cl, h)
+hist = [{"question": f"q{i}", "answer": f"a{i}"} for i in range(5)]
+r = c.post("/api/chat", json={"question": "And optical?", "history": hist})
+check("history accepted", r.status_code == 200, r.json)
+check("history trimmed to last 3", calls and [t["question"] for t in calls[-1]] == ["q2", "q3", "q4"], calls)
+r = c.post("/api/chat", json={"question": "x", "history": [{"question": " ", "answer": "a"}]})
+check("blank history turns dropped", r.status_code == 200 and calls[-1] == [], calls[-1])
+r = c.post("/api/chat", json={"question": "x", "history": [{"question": "q", "answer": "y" * 9000}]})
+check("long answers cut", r.status_code == 200 and len(calls[-1][0]["answer"]) == 3000)
+for bad, name in [("text", "string"), ([{"question": 1, "answer": "a"}], "non-string turn"),
+                  (["x"], "non-dict turn"), ({"question": "q"}, "dict")]:
+    r = c.post("/api/chat", json={"question": "x", "history": bad})
+    check(f"rejects {name} history", r.status_code == 400 and "history" in r.json["error"], r.json)
+r = c.post("/api/chat", json={"question": "x"})
+check("no history ok", r.status_code == 200 and calls[-1] == [])
+server.answer = orig_answer
+
 r = c.post("/api/chat", data="not json", content_type="text/plain")
 check("rejects non-JSON", r.status_code == 400)
 

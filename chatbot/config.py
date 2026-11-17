@@ -38,3 +38,7 @@ MAX_TOKENS = 2000
 
 # --- Web server (Phase 4) ---
 MAX_QUESTION_CHARS = 500   # longer questions are rejected
+MAX_HISTORY_TURNS = 3      # earlier question/answer pairs used for follow-ups (0 = off)
+FOLLOW_UP_EXTRA = 2        # for a follow-up, chunks added (on top of TOP_K for the new question)
+                           # from searching the previous question + the new one together
+MAX_ANSWER_CHARS = 3000    # earlier answers longer than this are cut short
