@@ -7,6 +7,7 @@ Usage:
 Needs ANTHROPIC_API_KEY in chatbot/.env (see .env.example).
 """
 import argparse
+import html
 import os
 import re
 
@@ -47,7 +48,8 @@ def get_client() -> anthropic.Anthropic:
 
 def build_prompt(question: str, chunks: list[dict]) -> str:
     blocks = [
-        f'<source id="{i}" title="{c["title"]}" url="{c["url"]}">\n{c["text"]}\n</source>'
+        f'<source id="{i}" title="{html.escape(c["title"])}" url="{html.escape(c["url"])}">\n'
+        f'{c["text"]}\n</source>'
         for i, c in enumerate(chunks, 1)
     ]
     return "<sources>\n" + "\n".join(blocks) + "\n</sources>\n\nQuestion: " + question
