@@ -9,3 +9,6 @@ rank-bm25
 
 # Phase 3 - Claude API
 anthropic
+
+# Phase 4 - web server
+flask

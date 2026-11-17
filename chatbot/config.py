@@ -27,3 +27,6 @@ COMPANY_NAME = "Australian Unity"
 MODEL = "claude-sonnet-5-5"   # latest Sonnet (checked against the Claude API docs, Nov 2026)
 EFFORT = "low"                # how hard the model thinks: low is fast/cheap and fine for short answers
 MAX_TOKENS = 2000
+
+# --- Web server (Phase 4) ---
+MAX_QUESTION_CHARS = 500   # longer questions are rejected
