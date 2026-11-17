@@ -99,7 +99,11 @@ def answer(question: str, index: SearchIndex, client: anthropic.Anthropic) -> di
                        if 0 < int(m[1]) <= len(chunks) else ""),
             text,
         )
-        text = re.sub(r"(\[\d+\])\1+", r"\1", text)  # [1][1] -> [1]
+        text = re.sub(  # [2][1][2] -> [1][2]
+            r"(?:\[\d+\]){2,}",
+            lambda m: "".join(f"[{n}]" for n in sorted({int(x) for x in re.findall(r"\d+", m[0])})),
+            text,
+        )
         text = re.sub(r" +([.,;:!?])", r"\1", text)  # tidy space left by a dropped citation
 
     return {"answer": text, "sources": sources, "not_found": not_found, "chunks": chunks}

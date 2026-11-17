@@ -54,5 +54,7 @@ check("real index returns 5", len(res) == 5)
 # 9. title with quote breaks the XML attribute?
 p = A.build_prompt("q", [{"title": 'Say "hi"', "url": "u", "text": "t"}])
 check("title quotes escaped", 'title="Say "hi""' not in p, p[:80])
+r = A.answer("q", FakeIndex(chunks), FakeClient("Mixed [2][1][4]."))
+check("group sorted", r["answer"] == "Mixed [1][2][3].", r["answer"])
 print("FAILURES:", fails)
 sys.exit(1 if fails else 0)
