@@ -98,6 +98,7 @@ def answer(question: str, index: SearchIndex, client: anthropic.Anthropic) -> di
             text,
         )
         text = re.sub(r"(\[\d+\])\1+", r"\1", text)  # [1][1] -> [1]
+        text = re.sub(r" +([.,;:!?])", r"\1", text)  # tidy space left by a dropped citation
 
     return {"answer": text, "sources": sources, "not_found": not_found, "chunks": chunks}
 
