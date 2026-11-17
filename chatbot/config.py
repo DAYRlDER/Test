@@ -16,3 +16,8 @@ REMOVE_CLASS_PATTERN = r"lhc-form|price-box"
 BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = BASE_DIR / "data"
 PAGES_FILE = DATA_DIR / "pages.json"
+
+# --- Index / retrieval ---
+CHUNK_WORDS = 500          # target words per chunk
+CHUNK_OVERLAP = 100        # words repeated between neighbouring chunks
+TOP_K = 5                  # chunks returned per question

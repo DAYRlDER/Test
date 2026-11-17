@@ -3,3 +3,6 @@ requests
 beautifulsoup4
 lxml
 python-dotenv
+
+# Phase 2 - keyword search
+rank-bm25
